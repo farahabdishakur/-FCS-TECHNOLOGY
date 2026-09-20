@@ -14,7 +14,10 @@ export default function Admin() {
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState('')
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'orders' | 'settings'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'services' | 'orders' | 'settings' | 'users'>('overview')
+  type AdminUser = { id: number; name: string; email: string; provider: string; createdAt: number; deletedAt: number | null }
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [usersLoading, setUsersLoading] = useState(false)
   const [servicesList, setServicesList] = useState<Service[]>([])
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getStoredSettings())
   const [searchTerm, setSearchTerm] = useState('')
@@ -180,6 +183,41 @@ export default function Admin() {
       setSyncingAI(false)
     }
   }
+
+  const authHeaders = { 'content-type': 'application/json', ...(AI_SYNC_TOKEN ? { 'x-admin-token': AI_SYNC_TOKEN } : {}) }
+
+  const loadUsers = async () => {
+    if (!AI_API) return
+    setUsersLoading(true)
+    try {
+      const res = await fetch(`${AI_API}/api/admin/users`, { headers: authHeaders })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+      setUsers(data.users || [])
+    } catch (e) {
+      showToast(`Khalad: liiska macaamiisha lama helin (${e instanceof Error ? e.message : 'unknown'}).`)
+    } finally {
+      setUsersLoading(false)
+    }
+  }
+
+  const setUserAction = async (id: number, action: 'delete' | 'restore') => {
+    if (!AI_API) return
+    try {
+      const res = await fetch(`${AI_API}/api/admin/users`, { method: 'POST', headers: authHeaders, body: JSON.stringify({ action, id }) })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+      showToast(action === 'delete' ? 'Macaamiilka waa la tirtiray (waa la soo celin karaa).' : 'Macaamiilka waa la soo celiyay.')
+      loadUsers()
+    } catch (e) {
+      showToast(`Khalad: ${e instanceof Error ? e.message : 'unknown'}`)
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'users' && isAuthenticated) loadUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, isAuthenticated])
 
   const handleResetDefaults = () => {
     if (confirm('Ma ziirtaa inaad xogta oo dhan ku celiso horey (Reset to defaults)?')) {
@@ -434,6 +472,7 @@ export default function Admin() {
         <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid rgba(148, 163, 184, 0.15)', marginBottom: 32, paddingBottom: 12, flexWrap: 'wrap' }}>
           {[
             { id: 'services', label: `Maaraynta Adeegyada (${servicesList.length})`, icon: Database },
+            { id: 'users', label: `Macaamiisha (${users.filter((u) => !u.deletedAt).length})`, icon: Users },
             { id: 'settings', label: 'Xogta Ganacsiga (Site Info)', icon: Settings },
             { id: 'orders', label: 'Dalabaadka WhatsApp', icon: MessageSquare },
             { id: 'overview', label: 'Overview Stats', icon: LayoutDashboard },
@@ -573,6 +612,59 @@ export default function Admin() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'users' && (
+          <div style={{ background: 'rgba(30, 41, 59, 0.6)', borderRadius: 20, border: '1px solid rgba(148, 163, 184, 0.1)', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 20 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800 }}>Macaamiisha iska diiwaan-galiyay (email/password/Google)</h2>
+              <button onClick={loadUsers} disabled={usersLoading} style={{ background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', padding: '8px 14px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>
+                <RefreshCw size={13} style={{ marginRight: 6, verticalAlign: -2 }} /> {usersLoading ? 'Sugaya…' : 'Cusboonaysii'}
+              </button>
+            </div>
+            {!AI_API && <p style={{ padding: '0 20px 20px', color: '#F87171', fontSize: 13 }}>AI server (VITE_AGENT_API) lama dejin.</p>}
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 14 }}>
+                <thead>
+                  <tr style={{ background: 'rgba(15, 23, 42, 0.6)', color: '#94A3B8' }}>
+                    <th style={{ padding: '12px 20px' }}>Magaca</th>
+                    <th style={{ padding: '12px 20px' }}>Email</th>
+                    <th style={{ padding: '12px 20px' }}>Habka</th>
+                    <th style={{ padding: '12px 20px' }}>Xaalad</th>
+                    <th style={{ padding: '12px 20px', textAlign: 'right' }}>Ficil</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id} style={{ borderTop: '1px solid rgba(148, 163, 184, 0.08)', color: '#CBD5E1', opacity: u.deletedAt ? 0.5 : 1 }}>
+                      <td style={{ padding: '12px 20px', fontWeight: 700, color: '#F8FAFC' }}>{u.name}</td>
+                      <td style={{ padding: '12px 20px' }}>{u.email}</td>
+                      <td style={{ padding: '12px 20px' }}>{u.provider}</td>
+                      <td style={{ padding: '12px 20px' }}>{u.deletedAt ? 'La tirtiray' : 'Firfircoon'}</td>
+                      <td style={{ padding: '12px 20px', textAlign: 'right' }}>
+                        {u.deletedAt ? (
+                          <button onClick={() => setUserAction(u.id, 'restore')} style={{ background: 'rgba(34,197,94,0.15)', color: '#4ADE80', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>
+                            Soo celi
+                          </button>
+                        ) : (
+                          <button onClick={() => setUserAction(u.id, 'delete')} style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: 'none', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 12 }}>
+                            <Trash2 size={12} style={{ marginRight: 4, verticalAlign: -1 }} /> Tirtir
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {!users.length && !usersLoading && (
+                    <tr>
+                      <td colSpan={5} style={{ padding: 24, textAlign: 'center', color: '#64748B' }}>
+                        Weli macaamiil iskuma diiwaan gelin.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

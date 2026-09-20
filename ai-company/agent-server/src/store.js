@@ -124,12 +124,32 @@ export function createStore(dir) {
 
   const findUserByEmail = (email) => {
     const id = emailIndex.get(email)
-    return id != null ? db.users[id] || null : null
+    const u = id != null ? db.users[id] || null : null
+    return u && !u.deletedAt ? u : null
+  }
+
+  const listUsers = () => Object.values(db.users).sort((a, b) => b.createdAt - a.createdAt)
+
+  // Tirtir "nabdoon" (soft-delete): user-ka wuu joogaa xogta, laakiin ma soo geli karo mar dambe ilaa la soo celiyo.
+  const deleteUser = (id) => {
+    const u = db.users[id]
+    if (!u || u.deletedAt) return null
+    u.deletedAt = Date.now()
+    save()
+    return u
+  }
+
+  const restoreUser = (id) => {
+    const u = db.users[id]
+    if (!u || !u.deletedAt) return null
+    u.deletedAt = null
+    save()
+    return u
   }
 
   const createUser = ({ name, email, passwordHash = null, provider = 'password' }) => {
     const id = nextId('user')
-    db.users[id] = { id, name, email, passwordHash, provider, createdAt: Date.now() }
+    db.users[id] = { id, name, email, passwordHash, provider, createdAt: Date.now(), deletedAt: null }
     emailIndex.set(email, id)
     save()
     return db.users[id]
@@ -181,5 +201,8 @@ export function createStore(dir) {
     toCsv,
     findUserByEmail,
     createUser,
+    listUsers,
+    deleteUser,
+    restoreUser,
   }
 }

@@ -184,6 +184,28 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         return json(res, 200, { reply, name: user.name })
       }
 
+      // Admin: liiska macaamiisha iska diiwaan-galiyay (email/password/Google) + tirtir/soo-celi (soft-delete).
+      if (url.pathname === '/api/admin/users' && (req.method === 'GET' || req.method === 'POST')) {
+        if (cfg.adminSyncToken && req.headers['x-admin-token'] !== cfg.adminSyncToken) {
+          return json(res, 401, { error: 'unauthorized' })
+        }
+        if (req.method === 'GET') {
+          const users = store.listUsers().map((u) => ({ id: u.id, name: u.name, email: u.email, provider: u.provider, createdAt: u.createdAt, deletedAt: u.deletedAt }))
+          return json(res, 200, { users })
+        }
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 2 * 1024))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { action, id } = body || {}
+        const u = action === 'delete' ? store.deleteUser(id) : action === 'restore' ? store.restoreUser(id) : null
+        if (!u) return json(res, 400, { error: 'action waa in ay tahay delete/restore, id-guna waa in uu jiraa' })
+        store.log('admin_user_' + action, { id })
+        return json(res, 200, { ok: true, user: { id: u.id, name: u.name, email: u.email, deletedAt: u.deletedAt } })
+      }
+
       // Admin dashboard (website) -> AI: cusboonaysii jadwalka qiimaha + FAQ-yada iyada oo aan server-ka dib loo bilaabin.
       if (req.method === 'POST' && url.pathname === '/api/admin/sync-services') {
         if (cfg.adminSyncToken && req.headers['x-admin-token'] !== cfg.adminSyncToken) {
