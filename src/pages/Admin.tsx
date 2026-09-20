@@ -45,12 +45,17 @@ export default function Admin() {
   }
 
   // Halkan waxaa loo baahan yahay email/password gaar ah — labadaba waa in ay saxan yihiin, sidoo kale bogga /fcs-panel-7391
-  // (ma jiro link muuqda) — ha la wadaagin cid kale. Beddel haddii aad rabto.
-  const ADMIN_EMAIL = 'farah@fcs-technology.so'
-  const ADMIN_PASSWORD = 'Farah-FCS-2026!'
+  // (ma jiro link muuqda) — ha la wadaagin cid kale. Beddelaadu waxay ku jirtaa .env (VITE_ADMIN_*), ma aha koodhka
+  // (repo-gu waa Public — ereyga sirta ah looma dhigin faylka la wadaago).
+  const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL as string | undefined) || ''
+  const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) || ''
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+      setLoginError('Admin login lama dejin (VITE_ADMIN_EMAIL / VITE_ADMIN_PASSWORD). Deploy-ka ku dar .env.')
+      return
+    }
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true)
       setLoginError('')
