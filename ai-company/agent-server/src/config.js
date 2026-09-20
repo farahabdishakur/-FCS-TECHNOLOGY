@@ -15,6 +15,19 @@ export function loadDotEnv(file = path.join(ROOT, '.env')) {
   }
 }
 
+// "maskax:123:abc,intake:456:def" -> { maskax: '123:abc', intake: '456:def' } (bot token-yadu qudhoodu waxay leeyihiin ':')
+function parseOfficeBots(value) {
+  const map = {}
+  for (const part of String(value || '').split(',')) {
+    const i = part.indexOf(':')
+    if (i < 0) continue
+    const office = part.slice(0, i).trim()
+    const token = part.slice(i + 1).trim()
+    if (office && token) map[office] = token
+  }
+  return map
+}
+
 export function loadConfig(env = process.env) {
   const num = (key, fallback) => (env[key] ? Number(env[key]) : fallback)
   return {
@@ -27,6 +40,7 @@ export function loadConfig(env = process.env) {
     siteUrl: env.SITE_URL || 'https://fcs-tignoolaji.surge.sh',
     paymentDetails: env.PAYMENT_DETAILS || '',
     adminSyncToken: env.ADMIN_SYNC_TOKEN || '',
+    googleClientId: env.GOOGLE_CLIENT_ID || '',
     allowedOrigins: (env.ALLOWED_ORIGINS || 'http://localhost:8443,http://localhost:5173,https://fcs-tignoolaji.surge.sh')
       .split(',')
       .map((s) => s.trim())
@@ -39,7 +53,13 @@ export function loadConfig(env = process.env) {
       dailyLimit: num('LLM_DAILY_LIMIT', 400),
       timeoutMs: num('LLM_TIMEOUT_MS', 30000),
     },
-    telegram: { token: env.TELEGRAM_BOT_TOKEN || '', ideasToken: env.IDEAS_BOT_TOKEN || '', publicToken: env.PUBLIC_BOT_TOKEN || '', ownerChatId: env.OWNER_CHAT_ID || '' },
+    telegram: {
+      token: env.TELEGRAM_BOT_TOKEN || '',
+      ideasToken: env.IDEAS_BOT_TOKEN || '',
+      publicToken: env.PUBLIC_BOT_TOKEN || '',
+      ownerChatId: env.OWNER_CHAT_ID || '',
+      officeBots: parseOfficeBots(env.TELEGRAM_OFFICE_BOTS),
+    },
     reportHour: num('REPORT_HOUR', 8),
     tzOffsetHours: num('TZ_OFFSET_HOURS', 3),
     rate: { max: num('RATE_MAX', 20), windowMs: num('RATE_WINDOW_MS', 10 * 60 * 1000) },

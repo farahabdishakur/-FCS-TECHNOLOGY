@@ -7,6 +7,7 @@ const navLinks = [
   { label: 'Services', href: '/services' },
   { label: '3D Card & CV', href: '/card-3d' },
   { label: 'Portfolio', href: '/portfolio' },
+  { label: 'Shaqaalaha', href: '/team' },
 ]
 
 const WA_NUMBER = '252637133499'

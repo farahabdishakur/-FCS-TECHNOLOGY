@@ -18,22 +18,37 @@ const SHORTCUTS = {
 export const telegramSessionId = (chatId) => 'tg' + String(chatId).replace('-', 'n').padStart(14, '0')
 
 // Isku xidha bot-ka Telegram ee dadka (macaamiisha) iyo AI-ga: isla socodka website chat-ka.
-export function createTelegramBridge({ store, orchestrator, bot, rate = { max: 20, windowMs: 10 * 60 * 1000 } }) {
+// `office`: haddii bot-kani u gaar yahay hal xafiis (persona bot), la isticmaalo si outbox-ku (flushOutbox) uu
+// isaga u dirin kaliya sesion-nada hadda kula socda BOT-kan (haddii macaamiilku u wareego bot kale, halkaas ayaa loo diraa).
+export function createTelegramBridge({ store, orchestrator, bot, welcome = WELCOME, office = 'public', rate = { max: 20, windowMs: 10 * 60 * 1000 } }) {
   const limiter = createRateLimiter(rate)
+
+  function bindSession(chatId, msg) {
+    const session = store.getSession(telegramSessionId(chatId))
+    session.tgChat = chatId
+    session.tgBotOffice = office
+    if (msg?.from?.first_name) session.name = msg.from.first_name
+    store.save()
+    return session
+  }
 
   async function handle(text, chatId, msg) {
     let t = String(text || '').trim()
     if (!t) return ''
     const cmd = t.split(/\s+/)[0].toLowerCase().replace(/@\w+$/, '')
-    if (cmd === '/start' || cmd === '/help') return WELCOME
+    // /start iyo /help sidoo kale waa la isku-xidhaa (tgChat/tgBotOffice) si Farah uu u dirto fariin xitaa haddii
+    // macaamiilku aan weli qorin fariin dhab ah — ma aha oo kaliya markuu wax weydiiyo.
+    if (cmd === '/start' || cmd === '/help') {
+      bindSession(chatId, msg)
+      return welcome
+    }
     if (SHORTCUTS[cmd]) t = SHORTCUTS[cmd]
-    else if (t.startsWith('/')) return WELCOME
+    else if (t.startsWith('/')) return welcome
 
     if (!limiter.allow(String(chatId))) return 'Fadlan yara sug, fariimo aad u badan ayaad dirtay.'
 
     const sessionId = telegramSessionId(chatId)
-    const session = store.getSession(sessionId)
-    session.tgChat = chatId
+    bindSession(chatId, msg)
     const { reply } = await orchestrator.handleCustomer({ sessionId, text: t, name: msg?.from?.first_name })
     return reply
   }
@@ -41,7 +56,7 @@ export function createTelegramBridge({ store, orchestrator, bot, rate = { max: 2
   // Fariimaha Farah ogolaaday ama u diray (/reply, /answer, OK #id) ayaa loo sii dirayaa macaamiilka Telegram-ka.
   async function flushOutbox() {
     for (const s of Object.values(store.db.sessions)) {
-      if (!s.tgChat) continue
+      if (!s.tgChat || (s.tgBotOffice || 'public') !== office) continue
       for (const m of store.readOutbox(s.id, s.tgCursor || 0)) {
         await bot.send(m.text, s.tgChat)
         s.tgCursor = m.id

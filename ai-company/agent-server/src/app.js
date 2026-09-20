@@ -9,6 +9,8 @@ import { createIdeas } from './ideas.js'
 import { createOrchestrator } from './orchestrator.js'
 import { createRateLimiter } from './guard.js'
 import { buildKnowledgeData, applyRowsToBrainText } from './servicesSync.js'
+import { verifyGoogleIdToken } from './googleAuth.js'
+import { hashPassword, verifyPassword, validateRegistration, normalizeEmail } from './auth.js'
 
 const SESSION_ID = /^[A-Za-z0-9_-]{16,64}$/
 
@@ -21,6 +23,7 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
   const orchestrator = createOrchestrator({ store, brain, agents, llm, knowledge, notify, sendGroup, cfg })
   const ideas = createIdeas({ store, brain, knowledge, llm })
   const limiter = createRateLimiter(cfg.rate)
+  const authLimiter = createRateLimiter({ max: 8, windowMs: 10 * 60 * 1000 })
 
   // services.ts/Admin -> AI: jadwalka qiimaha (brain.catalog) iyo aqoonta (knowledge) dib ayaa loo soo raraa iyada oo server-ku aan dib u bilaabmin.
   function reloadBrain() {
@@ -94,6 +97,91 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         if (!SESSION_ID.test(sessionId)) return json(res, 400, { error: 'bad request' })
         const after = Number(url.searchParams.get('after')) || 0
         return json(res, 200, { messages: store.readOutbox(sessionId, after) })
+      }
+
+      // Xaqiijinta macaamiisha (email/password ama Google) — kaliya la weydiiyaa marka dalabku gaadho tallaabada
+      // magaca (guided.js), si loo hubiyo macaamiil dhab ah ka hor xaqiijinta dalabka. Sadexdaba dhammaan waxay isku
+      // dhigaan aqoonsiga sesion-ka hadda socda oo kaliya (bindAuthedSession) — ma khusayso wada-hadalka guud.
+      const bindAuthedSession = async (sessionId, { name, email, userId }) => {
+        const session = store.getSession(sessionId)
+        session.name = name
+        session.userEmail = email
+        session.userId = userId
+        session.verified = true
+        store.save()
+        store.log('signed_in', { session: sessionId, email })
+        if (session.flow?.step === 'name') {
+          const r = await orchestrator.handleCustomer({ sessionId, text: name })
+          return r.reply
+        }
+        return `✅ Waad soo gashay, ${name}.`
+      }
+
+      const authIp = () => req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/google') {
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 16 * 1024))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId, credential } = body || {}
+        if (!SESSION_ID.test(sessionId || '') || typeof credential !== 'string' || !credential) {
+          return json(res, 400, { error: 'bad request' })
+        }
+        let profile
+        try {
+          profile = await verifyGoogleIdToken(credential, cfg.googleClientId, fetchImpl)
+        } catch (e) {
+          store.log('google_auth_error', { message: e.message })
+          return json(res, 401, { error: 'google sign-in failed' })
+        }
+        const email = normalizeEmail(profile.email)
+        let user = store.findUserByEmail(email)
+        if (!user) user = store.createUser({ name: profile.name, email, provider: 'google' })
+        const reply = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name || profile.name })
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/register') {
+        if (!authLimiter.allow(authIp())) return json(res, 429, { error: 'Fadlan yara sug, isku day badan ayaad samaysay.' })
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 4 * 1024))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId, name, password } = body || {}
+        const email = normalizeEmail(body?.email)
+        if (!SESSION_ID.test(sessionId || '')) return json(res, 400, { error: 'bad request' })
+        const errors = validateRegistration({ name, email, password })
+        if (errors.length) return json(res, 400, { error: errors.join(' ') })
+        if (store.findUserByEmail(email)) return json(res, 409, { error: 'Email-kan horeba waa la isticmaalay. Isku day "Soo gal" halkeeda.' })
+        const { salt, hash } = hashPassword(password)
+        const user = store.createUser({ name: String(name).trim(), email, passwordHash: `${salt}:${hash}` })
+        const reply = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name })
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/login') {
+        if (!authLimiter.allow(authIp())) return json(res, 429, { error: 'Fadlan yara sug, isku day badan ayaad samaysay.' })
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 4 * 1024))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId, password } = body || {}
+        const email = normalizeEmail(body?.email)
+        if (!SESSION_ID.test(sessionId || '') || !email || !password) return json(res, 400, { error: 'bad request' })
+        const user = store.findUserByEmail(email)
+        const [salt, hash] = (user?.passwordHash || '').split(':')
+        if (!user || !salt || !verifyPassword(password, salt, hash)) {
+          return json(res, 401, { error: 'Email-ka ama password-ka waa khalad.' })
+        }
+        const reply = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name })
       }
 
       // Admin dashboard (website) -> AI: cusboonaysii jadwalka qiimaha + FAQ-yada iyada oo aan server-ka dib loo bilaabin.

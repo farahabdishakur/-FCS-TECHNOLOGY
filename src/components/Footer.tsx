@@ -120,6 +120,7 @@ export default function Footer() {
                 ['Portfolio & Systems', '/cv/portfolio.html'],
                 ['Adeegyada', '/services'],
                 ['Qiimaha', '/pricing'],
+                ['Shaqaalaha', '/team'],
               ].map(([label, href]) => (
                 <li key={href}>
                   <a

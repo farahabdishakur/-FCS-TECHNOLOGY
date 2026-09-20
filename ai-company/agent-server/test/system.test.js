@@ -376,3 +376,86 @@ test('POST /api/admin/sync-services: Admin -> AI, qiimo cusub wuu shaqeeyaa iyad
     app.server.close()
   }
 })
+
+test('POST /api/auth/google: xaqiijinta hal mar oo dalabku joogsanayo tallaabada magaca wuu sii socdaa', async () => {
+  const fakeFetch = async (url) => {
+    if (String(url).includes('oauth2.googleapis.com/tokeninfo')) {
+      return new Response(JSON.stringify({ aud: 'CID123', email: 'sahra@gmail.com', email_verified: 'true', name: 'Sahra Cali' }), { status: 200 })
+    }
+    throw new Error('unexpected fetch: ' + url)
+  }
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), googleClientId: 'CID123', llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {}, fetchImpl: fakeFetch })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  try {
+    const s = sid()
+    // Bilaabo dalab logo ah ilaa tallaabada magaca (guided.js: goal -> details -> deadline -> name)
+    await app.orchestrator.handleCustomer({ sessionId: s, text: 'waxaan rabaa logo' })
+    await app.orchestrator.handleCustomer({ sessionId: s, text: 'dukaan dhar ah' })
+    await app.orchestrator.handleCustomer({ sessionId: s, text: 'logo casri ah' })
+    const atName = await app.orchestrator.handleCustomer({ sessionId: s, text: '1 toddobaad' })
+    assert.match(atName.reply, /Magacaaga/)
+
+    const res = await fetch(base + '/api/auth/google', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sessionId: s, credential: 'good-token' }) })
+    assert.equal(res.status, 200)
+    const out = await res.json()
+    assert.equal(out.name, 'Sahra Cali')
+    assert.match(out.reply, /Lambarkaaga WhatsApp/)
+    assert.equal(app.store.db.sessions[s].name, 'Sahra Cali')
+    assert.equal(app.store.db.sessions[s].userEmail, 'sahra@gmail.com')
+    assert.equal(app.store.db.sessions[s].verified, true)
+    assert.ok(app.store.findUserByEmail('sahra@gmail.com'), 'Google sign-in waa in uu abuuraa user record')
+  } finally {
+    app.server.close()
+  }
+})
+
+test('POST /api/auth/google: aud khaldan (client ID kale) waa la diidaa', async () => {
+  const fakeFetch = async () => new Response(JSON.stringify({ aud: 'SOME-OTHER-CLIENT', email: 'x@gmail.com', name: 'X' }), { status: 200 })
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), googleClientId: 'CID123', llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {}, fetchImpl: fakeFetch })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  try {
+    const res = await fetch(base + '/api/auth/google', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sessionId: sid(), credential: 'forged' }) })
+    assert.equal(res.status, 401)
+  } finally {
+    app.server.close()
+  }
+})
+
+test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh', async () => {
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {} })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+  try {
+    const weak = await post('/api/auth/register', { sessionId: sid(), name: 'Xasan', email: 'xasan@gmail.com', password: '123' })
+    assert.equal(weak.status, 400)
+
+    const s1 = sid()
+    const reg = await post('/api/auth/register', { sessionId: s1, name: 'Xasan', email: 'Xasan@Gmail.com', password: 'supersecret1' })
+    assert.equal(reg.status, 200)
+    assert.equal((await reg.json()).name, 'Xasan')
+    assert.equal(app.store.db.sessions[s1].userEmail, 'xasan@gmail.com')
+
+    const dupe = await post('/api/auth/register', { sessionId: sid(), name: 'Xasan 2', email: 'xasan@gmail.com', password: 'anotherpass1' })
+    assert.equal(dupe.status, 409)
+
+    const wrongPw = await post('/api/auth/login', { sessionId: sid(), email: 'xasan@gmail.com', password: 'wrong-password' })
+    assert.equal(wrongPw.status, 401)
+
+    const s2 = sid()
+    const login = await post('/api/auth/login', { sessionId: s2, email: 'xasan@gmail.com', password: 'supersecret1' })
+    assert.equal(login.status, 200)
+    assert.equal((await login.json()).name, 'Xasan')
+    assert.equal(app.store.db.sessions[s2].userId, app.store.db.sessions[s1].userId)
+
+    const passHash = app.store.findUserByEmail('xasan@gmail.com').passwordHash
+    assert.ok(!passHash.includes('supersecret1'), 'password lama kaydin qoraal cad (plaintext)')
+  } finally {
+    app.server.close()
+  }
+})

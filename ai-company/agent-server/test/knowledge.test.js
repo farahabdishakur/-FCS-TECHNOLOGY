@@ -289,6 +289,40 @@ test('Bot-ka Telegram ee dadka: wada-hadal, hagaha dalabka, iyo fariimaha Farah 
   assert.equal(sent.length, 1)
 })
 
+test('Bot-yada xafiisyada: salaan gaar ah oo persona ah, iyo outbox oo aan isku dhex-galin bot-yada kala duwan', async () => {
+  const { createTelegramBridge, telegramSessionId } = await import('../src/tgpublic.js')
+  const { personaWelcome } = await import('../src/personas.js')
+  const t = setup()
+  const from = { from: { first_name: 'Sahra' } }
+
+  const salesSent = []
+  const salesBridge = createTelegramBridge({
+    store: t.store,
+    orchestrator: t.app.orchestrator,
+    bot: { send: async (text, chat) => salesSent.push([chat, text]) },
+    welcome: personaWelcome('sales'),
+    office: 'sales',
+  })
+  const supportSent = []
+  const supportBridge = createTelegramBridge({
+    store: t.store,
+    orchestrator: t.app.orchestrator,
+    bot: { send: async (text, chat) => supportSent.push([chat, text]) },
+    welcome: personaWelcome('taageero'),
+    office: 'taageero',
+  })
+
+  assert.match(await salesBridge.handle('/start', 900, from), /Cabdiraxmaan/)
+  assert.match(await supportBridge.handle('/start', 900, from), /Sagal/)
+
+  // Isla macaamiilka (chatId 900) — bot-kii ugu dambeeyay uu la hadlay (taageero) ayaa haysta xiriirka.
+  t.store.queueOutbox(telegramSessionId(900), 'Farah: fariin cusub')
+  await salesBridge.flushOutbox()
+  assert.deepEqual(salesSent, [])
+  await supportBridge.flushOutbox()
+  assert.deepEqual(supportSent, [[900, 'Farah: fariin cusub']])
+})
+
 test('Bot-ka group-yada: FAQ toos ah, dalab → DM redirect, salaan marka la ku daro, aamusnaan haddii aan la weyddiinin', async () => {
   const { createGroupBridge } = await import('../src/tgpublic.js')
   const t = setup()

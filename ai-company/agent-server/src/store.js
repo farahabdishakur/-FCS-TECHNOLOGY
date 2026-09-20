@@ -7,6 +7,7 @@ const emptyDb = () => ({
   approvals: {},
   outbox: {},
   groups: {},
+  users: {},
   meta: { seq: {}, paused: false, llm: {}, lastReportDay: '', lastPostsWeek: '' },
 })
 
@@ -117,6 +118,23 @@ export function createStore(dir) {
 
   const pendingApprovals = () => Object.values(db.approvals).filter((a) => a.status === 'pending')
 
+  // Index (email -> userId) oo memory ku jira — si raadinta email-ka aanay noqonin "Table Scan" (Object.values().find())
+  // marka macaamiisha ay kordhaan; waa la dhisaa mar kaliya markii la load-gareynayo, lagumana kaydiyo faylka (waa la soo saari karaa).
+  const emailIndex = new Map(Object.values(db.users).map((u) => [u.email, u.id]))
+
+  const findUserByEmail = (email) => {
+    const id = emailIndex.get(email)
+    return id != null ? db.users[id] || null : null
+  }
+
+  const createUser = ({ name, email, passwordHash = null, provider = 'password' }) => {
+    const id = nextId('user')
+    db.users[id] = { id, name, email, passwordHash, provider, createdAt: Date.now() }
+    emailIndex.set(email, id)
+    save()
+    return db.users[id]
+  }
+
   const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
   const toCsv = () => {
     const head = ['id', 'magac', 'tel', 'luuqad', 'adeeg', 'xaalad', 'qiimo', '50%_horay', '50%_dhammaad', 'deadline', 'qoraal_AI', 'u_gudbi_Farah']
@@ -161,5 +179,7 @@ export function createStore(dir) {
     createOrder,
     pendingApprovals,
     toCsv,
+    findUserByEmail,
+    createUser,
   }
 }
