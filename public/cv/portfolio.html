@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farah Abdishakur - CV & Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111111;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* CV Container */
+    .cv-container {
+      width: 100%;
+      max-width: 900px;
+      background: #1a1a24;
+      border-radius: 12px;
+      box-shadow: 0 0 50px rgba(147, 51, 234, 0.4), inset 0 0 0 1px rgba(147, 51, 234, 0.5);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Glow Effect behind */
+    .cv-container::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      background: linear-gradient(45deg, #a855f7, #6b21a8, #c084fc);
+      z-index: -1;
+      filter: blur(20px);
+      opacity: 0.5;
+    }
+
+    /* Header Section */
+    .header {
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background: #15151e;
+    }
+
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 4px solid #15151e;
+      box-shadow: 0 0 0 3px #a855f7, 0 0 30px rgba(168, 85, 247, 0.6);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .header-info {
+      flex: 1;
+    }
+    .name {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .title {
+      color: #c084fc;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .contacts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .contact-icon {
+      width: 20px;
+      height: 20px;
+      background: #9333ea;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: white;
+    }
+
+    /* Main Content Layout */
+    .main-content {
+      display: flex;
+      flex-direction: row;
+    }
+
+    /* Left Column */
+    .left-col {
+      width: 35%;
+      background: #3b1c6d;
+      padding: 40px 30px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .profile-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e9d5ff;
+      margin-bottom: 40px;
+    }
+
+    .skill-item {
+      margin-bottom: 15px;
+    }
+    .skill-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .stars {
+      color: #fbbf24;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      background: #ffffff;
+      border-radius: 3px;
+    }
+
+    .edu-item {
+      margin-bottom: 15px;
+    }
+    .edu-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .edu-meta {
+      font-size: 12px;
+      color: #d8b4fe;
+      margin-top: 2px;
+    }
+
+    /* Right Column */
+    .right-col {
+      width: 65%;
+      padding: 40px;
+      background: #1a1a24;
+    }
+
+    .right-col .section-title {
+      color: #c084fc;
+    }
+
+    /* Timeline / Systems */
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(147, 51, 234, 0.3);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #a855f7;
+      box-shadow: 0 0 10px #a855f7;
+    }
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+    .item-price {
+      font-size: 13px;
+      color: #10b981;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .item-price span {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+    .item-desc {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .item-desc ul {
+      padding-left: 15px;
+      margin-top: 5px;
+    }
+    .item-desc li {
+      margin-bottom: 4px;
+    }
+    
+    .item-content-wrapper {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      align-items: flex-start;
+    }
+    .item-image {
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(147, 51, 234, 0.4);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+
+    .btn-order {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #c084fc;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid #c084fc;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .btn-order:hover {
+      background: #c084fc;
+      color: #111;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+      }
+      .left-col, .right-col {
+        width: 100%;
+      }
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .contacts {
+        justify-content: center;
+        text-align: left;
+      }
+      .item-content-wrapper {
+        flex-direction: column;
+      }
+      .item-image {
+        width: 100%;
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cv-container">
+    
+    <!-- Header -->
+    <div class="header">
+      <div class="avatar">
+        <!-- Bedel link-gan sawirkaaga dhabta ah -->
+        <img src="https://ui-avatars.com/api/?name=Farah+Abdishakur&background=0a0a1a&color=fff&size=200" alt="Farah Abdishakur" />
+      </div>
+      <div class="header-info">
+        <div class="name">Farah Abdishakur</div>
+        <div class="title">Digital Solutions Expert</div>
+        <div class="contacts">
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            +252 63 713 3499
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            farahabdishakurdahir@gmail.com
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🌐</div>
+            fcs-tignoolaji.surge.sh
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            Borama, Somaliland
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      
+      <!-- Left Column (Purple) -->
+      <div class="left-col">
+        
+        <h2 class="section-title">Profile</h2>
+        <p class="profile-text">
+          Xirfadle casri ah oo u heellan horumarinta ganacsiyada (Digital Solutions). Waxaan khibrad fog u leeyahay dhisidda sistamyada maaraynta ganacsiga, naqshadaynta UI/UX, iyo hal-abuurka teknoolojiyadda.
+        </p>
+
+        <h2 class="section-title">Skills</h2>
+        
+        <div class="skill-item">
+          <div class="skill-name">Web Development <span class="stars">★★★★★</span></div>
+          <div class="progress-bar"><div class="progress" style="width: 95%;"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">UI/UX Design <span class="stars">★★★★★</span></div>
+          <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">System Architecture <span class="stars">★★★★☆</span></div>
+          <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Digital Marketing <span class="stars">★★★★☆</span></div>
+          <div class="progress-bar"><div class="progress" style="width: 80%;"></div></div>
+        </div>
+
+        <br>
+        <h2 class="section-title">Adeegyada & Xalka</h2>
+        <p class="profile-text">
+          Waxaan bixinaa 10-ka sistam ee hoos ku xusan oo diyaar ah, qiimo jaban, oo si rasmi ah ganacsigaaga u casriyaynaya. Hubi liiska dhanka midig.
+        </p>
+
+        <br>
+        <a href="card-3d.html" style="color:white; text-decoration:none; font-size:14px; display:inline-block; border-bottom:1px solid white;">← Ku laabo Kaarka 3D</a>
+
+      </div>
+
+      <!-- Right Column (Dark) -->
+      <div class="right-col">
+        <h2 class="section-title">Adeegyada & Sistamyada (Systems)</h2>
+        
+        <div class="timeline">
+          
+          <div class="timeline-item">
+            <div class="item-title">1. Sistamka Iskuulada (School System)</div>
+            <div class="item-price">Qiimaha Setup: $150 <span>| Bixinta Billaha ah: $30/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/school,student?random=1" alt="School System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Maamulka ardayda iyo macalimiinta.</li>
+                  <li>Soo saarista natiijooyinka imtixaanaadka.</li>
+                  <li>La socodka xaadiriska iyo lacag bixinta waalidiinta.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Iskuulada." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">2. Sistamka Huteelada (Hotel Management)</div>
+            <div class="item-price">Qiimaha Setup: $200 <span>| Bixinta Billaha ah: $50/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/hotel,room?random=2" alt="Hotel System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Qabsashada qolalka (Room booking) & Check-in.</li>
+                  <li>Diiwaanka macaamiisha iyo xisaabaadka.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Huteelada." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">3. Sistamka Maqaaxiyaha & Cafe (POS)</div>
+            <div class="item-price">Qiimaha Setup: $100 <span>| Bixinta Billaha ah: $25/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/cafe,restaurant?random=3" alt="Cafe System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Nidaamka iibka iyo dalabaadka degdega ah.</li>
+                  <li>Maamulka jikada (Kitchen Display) iyo kaydka (Inventory).</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Maqaaxiyaha." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">4. Sistamka Xarumaha Caafimaadka</div>
+            <div class="item-price">Qiimaha Setup: $250 <span>| Bixinta Billaha ah: $60/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/hospital,clinic?random=4" alt="Hospital System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Diiwaangelinta bukaanada iyo ballamaha.</li>
+                  <li>Natiijooyinka shaybaarka iyo daawooyinka la qoray.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Caafimaadka." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">5. Sistamka Dukaamada & Supermarkets</div>
+            <div class="item-price">Qiimaha Setup: $100 <span>| Bixinta Billaha ah: $20/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/supermarket,grocery?random=5" alt="Supermarket System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Isticmaalka Barcode Scanner-ka.</li>
+                  <li>Iibinta maalinlaha ah iyo dabagalka alaabta yaraatay.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Dukaamada." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">6. Sistamka Farmasiyada</div>
+            <div class="item-price">Qiimaha Setup: $100 <span>| Bixinta Billaha ah: $20/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/pharmacy,medicine?random=6" alt="Pharmacy System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Digniinta daawooyinka dhacaya (Expiry Alerts).</li>
+                  <li>Iibka degdegga ah iyo faa'iidada.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Farmasiyada." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">7. Sistamka Guryaha (Real Estate)</div>
+            <div class="item-price">Qiimaha Setup: $150 <span>| Bixinta Billaha ah: $30/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/realestate,house?random=7" alt="Real Estate System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Maamulka kiraystayaasha iyo guryaha banaan.</li>
+                  <li>Soo saarista qaansheegta billaha ah (Invoices).</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Guryaha." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">8. Ganacsiga Online-ka (E-Commerce)</div>
+            <div class="item-price">Kharashka Buuxa: $300 <span>| (Kharash Hal Mar ah)</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/ecommerce,shopping?random=8" alt="E-Commerce System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Website wax lagu iibiyo oo dhammaystiran.</li>
+                  <li>Nidaamka dalabaadka iyo gaarsiinta (Delivery tracking).</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20E-Commerce." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="item-title">9. Sistamka Jimicsiga (Gym)</div>
+            <div class="item-price">Qiimaha Setup: $100 <span>| Bixinta Billaha ah: $25/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/gym,fitness?random=9" alt="Gym System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Diiwaangelinta xubnaha cusub.</li>
+                  <li>Xusuusinta waqtiga dhicitaanka (Membership Alerts).</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Gym-ka." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item" style="margin-bottom: 0;">
+            <div class="item-title">10. Sistamka Harqaanada & Farsamada</div>
+            <div class="item-price">Qiimaha Setup: $80 <span>| Bixinta Billaha ah: $15/bishii</span></div>
+            <div class="item-content-wrapper">
+              <img src="https://loremflickr.com/300/200/tailor,sewing?random=10" alt="Tailor System" class="item-image" />
+              <div class="item-desc">
+                <ul>
+                  <li>Diiwaangelinta cabbirada macaamiisha.</li>
+                  <li>La socodka waqtiga ballanta iyo dalabaadka.</li>
+                </ul>
+                <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20rabay%20Sistamka%20Harqaanada." class="btn-order">Dalbo Hadda →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

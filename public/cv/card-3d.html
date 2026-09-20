@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FCS Technology – Kaarka 3D</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      /* Page background — matches React app */
+      background: #0F172A;
+      font-family: 'Inter', sans-serif;
+      padding: 48px 20px;
+      overflow-x: hidden;
+    }
+
+    /* Subtle purple glow on page */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Page hero text block */
+    .page-hero {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 100px;
+      padding: 6px 18px;
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .page-title {
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: #F8FAFC;
+      margin-bottom: 10px;
+    }
+
+    .page-title span {
+      background: linear-gradient(135deg, #A78BFA 0%, #06B6D4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+      color: #94A3B8;
+      font-size: 14px;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════
+       STYLE PICKER — Color theme selector
+       10 themes matching the React app
+    ══════════════════════════════════════════ */
+    .picker-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .picker-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #CBD5E1;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    /* Palette icon */
+    .picker-label svg {
+      color: #A78BFA;
+    }
+
+    .style-picker {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      backdrop-filter: blur(12px);
+      flex-wrap: wrap;
+    }
+
+    .style-btn {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: #CBD5E1;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .style-btn:hover {
+      border-color: rgba(148, 163, 184, 0.3);
+      color: white;
+    }
+    .style-btn.active {
+      font-weight: 800;
+      color: white;
+    }
+
+    /* ══════════════════════════════════════════
+       FLIP HINT
+    ══════════════════════════════════════════ */
+    .flip-hint {
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════════
+       CARD SCENE — 3D perspective wrapper
+       Modify: perspective for depth
+    ══════════════════════════════════════════ */
+    .card-scene {
+      perspective: 1500px;
+      width: 720px;
+      height: 400px;
+      max-width: 95vw;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════════
+       CARD FLIPPER — the rotating element
+       Modify: transition duration/easing
+    ══════════════════════════════════════════ */
+    .card-flipper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+    .card-scene.flipped .card-flipper {
+      transform: rotateY(180deg);
+    }
+
+    /* ══════════════════════════════════════════
+       CARD FACE — shared styles for front & back
+    ══════════════════════════════════════════ */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      overflow: hidden;
+      /* Glow set via inline style per theme */
+    }
+
+    /* ════════════════════════════════════════
+       ─── FRONT FACE ───
+    ════════════════════════════════════════ */
+    .card-front {
+      display: flex;
+      /* Background set via JS per theme */
+    }
+
+    /* Tech dot-grid texture */
+    .card-grid-texture {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.9;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Left content panel */
+    .card-left {
+      flex: 1.25;
+      padding: 38px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* Brand row */
+    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .logo-box {
+      width: 50px; height: 50px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.95);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
+      /* border & shadow set via JS */
+    }
+    .logo-box img { width: 36px; height: 36px; object-fit: contain; }
+
+    .brand-name { color: #FFFFFF; font-weight: 950; font-size: 22px; letter-spacing: 1px; line-height: 1; }
+    /* accent color set via JS */
+    .brand-sub { font-size: 11px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
+
+    /* Person info */
+    .person-info { display: flex; flex-direction: column; }
+    .person-name { color: #FFFFFF; font-size: 32px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px; line-height: 1.1; }
+    .person-title { font-size: 15px; font-weight: 750; letter-spacing: 0.5px; margin-bottom: 16px; }
+    .person-divider { width: 44px; height: 4px; border-radius: 10px; }
+
+    /* Contacts */
+    .contacts { display: flex; flex-direction: column; gap: 10px; }
+    .contact-item {
+      display: flex; align-items: center; gap: 12px;
+      color: #94A3B8; font-size: 13px; font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s ease; cursor: default;
+    }
+    .contact-item:hover { color: #ffffff; transform: translateX(4px); }
+    .contact-icon { flex-shrink: 0; display: flex; align-items: center; }
+    .contact-icon svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Right photo panel */
+    .card-right {
+      flex: 0.95;
+      position: relative;
+      background-image: url('https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&fit=crop&auto=format');
+      background-size: cover; background-position: center;
+      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 12% 75%, 2% 50%, 20% 25%);
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 38px 32px; z-index: 2; transition: all 0.4s ease;
+    }
+    .card-right-overlay {
+      position: absolute; inset: 0;
+      /* gradient set via JS per theme */
+      mix-blend-mode: multiply; z-index: 1; pointer-events: none;
+    }
+    .card-right-shine {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+      z-index: 1; pointer-events: none;
+    }
+    .qr-container { display: flex; justify-content: flex-end; z-index: 2; position: relative; }
+    .qr-box {
+      background: white; padding: 8px; border-radius: 18px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      border: 2px solid rgba(255,255,255,0.9);
+      transition: transform 0.3s ease;
+    }
+    .card-scene:hover .qr-box { transform: scale(1.05) rotate(1deg); }
+    .qr-box img { width: 84px; height: 84px; display: block; }
+    .scan-label { text-align: right; z-index: 2; position: relative; }
+    .scan-label span { color: white; font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 3px 8px rgba(0,0,0,0.6); }
+
+    /* ════════════════════════════════════════
+       ─── BACK FACE ───
+    ════════════════════════════════════════ */
+    .card-back {
+      transform: rotateY(180deg);
+      background-image: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&fit=crop&auto=format');
+      background-size: cover; background-position: center;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 44px;
+    }
+    .card-back-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.94) 0%, rgba(5, 6, 10, 0.98) 100%);
+      z-index: 1; pointer-events: none;
+    }
+
+    /* Back header */
+    .back-header { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
+    .back-brand { display: flex; align-items: center; gap: 14px; }
+    .back-logo {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(10, 15, 30, 0.9);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
+      /* border set via JS */
+    }
+    .back-logo img { width: 30px; height: 30px; object-fit: contain; }
+    .back-brand-name { color: #FFFFFF; font-weight: 950; font-size: 18px; line-height: 1; }
+    .back-brand-sub { font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-top: 2px; }
+    .verified-badge {
+      /* bg set via JS */
+      color: #0F172A;
+      padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; white-space: nowrap;
+    }
+
+    /* Back middle */
+    .back-middle { display: flex; justify-content: space-between; align-items: center; gap: 20px; position: relative; z-index: 2; }
+    .services-list { display: flex; flex-direction: column; gap: 10px; }
+    .service-item { display: flex; align-items: center; gap: 10px; color: #CBD5E1; font-size: 13px; font-weight: 600; transition: color 0.2s ease, transform 0.2s ease; cursor: default; }
+    .service-item:hover { color: white; transform: translateX(4px); }
+    .service-bullet { font-size: 14px; flex-shrink: 0; }
+    .qr-column { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .qr-box-back { background: white; padding: 6px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.8); transition: transform 0.3s ease; }
+    .card-scene:hover .qr-box-back { transform: scale(1.05); }
+    .qr-box-back img { width: 72px; height: 72px; display: block; }
+    .qr-label-text { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* Back footer */
+    .back-footer { padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #94A3B8; position: relative; z-index: 2; }
+    .footer-theme { font-weight: 800; }
+
+    /* ══════════════════════════════════════════
+       ACTION BUTTONS
+    ══════════════════════════════════════════ */
+    .buttons {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: 12px;
+      font-size: 14px; font-weight: 700; text-decoration: none;
+      cursor: pointer; transition: all 0.25s ease; border: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary { background: linear-gradient(135deg, #7C3AED, #4F46E5); color: white; box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(124,58,237,0.5); }
+    .btn-ghost { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: white; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+    .btn-gold { background: rgba(245,158,11,0.12); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+    .btn-gold:hover { background: rgba(245,158,11,0.2); transform: translateY(-2px); }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════ */
+    @media (max-width: 760px) {
+      .card-scene { height: 260px; }
+      .card-left { padding: 22px 24px; }
+      .person-name { font-size: 22px; }
+      .person-title { font-size: 12px; margin-bottom: 10px; }
+      .logo-box { width: 38px; height: 38px; border-radius: 10px; }
+      .logo-box img, .back-logo img { width: 26px; height: 26px; }
+      .brand-name { font-size: 16px; }
+      .contact-item { font-size: 11px; }
+      .qr-box img { width: 58px; height: 58px; }
+      .card-back { padding: 24px; }
+      .back-brand-name { font-size: 15px; }
+      .service-item { font-size: 11px; }
+      .qr-box-back img { width: 56px; height: 56px; }
+      .back-footer { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       PAGE HERO
+  ══════════════════════════════════════════ -->
+  <div class="page-hero">
+    <div class="hero-badge">
+      <!-- Sparkle icon -->
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#A78BFA"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg>
+      Ultra-Premium 3D Card Engine
+    </div>
+    <h1 class="page-title">
+      Kaarka Rasmiga ah &amp;
+      <span>CV-ga Faarax</span>
+    </h1>
+    <p class="page-subtitle">
+      Fadlan dooro mid ka mid ah 10-ka style ee hoose si aad u aragto kaarka rasmiga ah — ka dibna taabo kaarka si aad uga aragto dambe.
+    </p>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       STYLE PICKER
+       10 themes matching the React app exactly
+  ══════════════════════════════════════════ -->
+  <div class="picker-wrapper">
+    <div class="picker-label">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="0.5" fill="#A78BFA"/><circle cx="17.5" cy="10.5" r="0.5" fill="#A78BFA"/><circle cx="8.5" cy="7.5" r="0.5" fill="#A78BFA"/><circle cx="6.5" cy="12.5" r="0.5" fill="#A78BFA"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      Dooro Style-ka Kaarka:
+    </div>
+    <div class="style-picker" id="stylePicker">
+      <!-- Buttons injected by JS -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       FLIP HINT
+  ══════════════════════════════════════════ -->
+  <div class="flip-hint">💡 Taabo kaarka si aad u wareejiso (Flip 3D)</div>
+
+  <!-- ══════════════════════════════════════════
+       3D FLIP CARD
+       Click anywhere on the card to flip
+  ══════════════════════════════════════════ -->
+  <div class="card-scene" id="cardScene" onclick="this.classList.toggle('flipped')">
+    <div class="card-flipper">
+
+      <!-- ═══ FRONT FACE ═══ -->
+      <div class="card-face card-front" id="cardFront">
+
+        <!-- Dot grid texture -->
+        <div class="card-grid-texture"></div>
+
+        <!-- LEFT: Contact info -->
+        <div class="card-left">
+          <div class="brand">
+            <div class="logo-box" id="logoBox">
+              <img src="/logo.png" alt="FCS Logo"
+                onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:900;font-size:16px;color:var(--accent)\'>FCS</span>'" />
+            </div>
+            <div>
+              <div class="brand-name">FCS</div>
+              <div class="brand-sub" id="brandSub">TECHNOLOGY</div>
+            </div>
+          </div>
+
+          <div class="person-info">
+            <div class="person-name">Farah Abdishakur</div>
+            <div class="person-title" id="personTitle">Digital Solutions Expert</div>
+            <div class="person-divider" id="personDivider"></div>
+          </div>
+
+          <div class="contacts">
+            <div class="contact-item">
+              <span class="contact-icon" id="ci1"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.86 10.7 19.79 19.79 0 01.77 2.1 2 2 0 012.76 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg></span>
+              <span>+252 63 713 3499</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon" id="ci2"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <span>farahabdishakurdahir@gmail.com</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon" id="ci3"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span>
+              <span>fcs-tignoolaji.so</span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon" id="ci4"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <span>Borama, Somaliland</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Photo panel -->
+        <div class="card-right">
+          <div class="card-right-overlay" id="cardRightOverlay"></div>
+          <div class="card-right-shine"></div>
+          <div class="qr-container">
+            <div class="qr-box">
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fwa.me%2F252637133499%3Ftext%3DAsc%20Farah%2C%20waxaan%20xiisaynayaa%20adeegyada%20FCS%20Technology.&color=0F172A&bgcolor=FFFFFF"
+                alt="WhatsApp QR" loading="lazy"
+              />
+            </div>
+          </div>
+          <div class="scan-label"><span>SCAN TO MESSAGE</span></div>
+        </div>
+
+      </div><!-- end card-front -->
+
+      <!-- ═══ BACK FACE ═══ -->
+      <div class="card-face card-back" id="cardBack">
+        <div class="card-back-overlay"></div>
+
+        <!-- Back header -->
+        <div class="back-header">
+          <div class="back-brand">
+            <div class="back-logo" id="backLogo">
+              <img src="/logo.png" alt="Logo"
+                onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-weight:900;font-size:12px;color:var(--accent)\'>FCS</span>'" />
+            </div>
+            <div>
+              <div class="back-brand-name">FCS Technology</div>
+              <div class="back-brand-sub" id="backBrandSub">Smart Digital Solutions</div>
+            </div>
+          </div>
+          <span class="verified-badge" id="verifiedBadge">VERIFIED PRO</span>
+        </div>
+
+        <!-- Back middle: services + QR -->
+        <div class="back-middle">
+          <div class="services-list">
+            <div class="service-item"><span class="service-bullet" id="sb1">✦</span><span>Websites &amp; Online Stores</span></div>
+            <div class="service-item"><span class="service-bullet" id="sb2">✦</span><span>Business POS &amp; ERP Systems</span></div>
+            <div class="service-item"><span class="service-bullet" id="sb3">✦</span><span>School &amp; Hotel Systems</span></div>
+            <div class="service-item"><span class="service-bullet" id="sb4">✦</span><span>UI/UX &amp; Branding Design</span></div>
+          </div>
+          <div class="qr-column">
+            <div class="qr-box-back">
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Ffcs-tignoolaji.surge.sh&color=0F172A&bgcolor=FFFFFF"
+                alt="Website QR" loading="lazy"
+              />
+            </div>
+            <span class="qr-label-text" id="qrLabelText">SCAN WEBSITE</span>
+          </div>
+        </div>
+
+        <!-- Back footer -->
+        <div class="back-footer" id="backFooter">
+          <span>© 2026 FCS Technology. All Rights Reserved.</span>
+          <span class="footer-theme" id="footerTheme">Theme: Original Cyan &amp; Purple</span>
+        </div>
+
+      </div><!-- end card-back -->
+
+    </div><!-- end card-flipper -->
+  </div><!-- end card-scene -->
+
+  <!-- ══════════════════════════════════════════
+       ACTION BUTTONS
+  ══════════════════════════════════════════ -->
+  <div class="buttons">
+    <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20xiisaynayaa%20adeegyada%20FCS%20Technology." target="_blank" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.524 5.847L.057 23.882a.5.5 0 00.614.641l6.156-1.61A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.892 0-3.663-.522-5.172-1.427l-.371-.224-3.847 1.007.978-3.75-.243-.391A9.959 9.959 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Ku Dalbo WhatsApp
+    </a>
+    <a href="card.vcf" download="Farah_Abdishakur.vcf" class="btn btn-ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Degso vCard
+    </a>
+    <a href="https://fcs-tignoolaji.surge.sh/" target="_blank" class="btn btn-ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Website-ka Fur
+    </a>
+    <a href="card-front.html" class="btn btn-gold">✦ Kaarka 2D</a>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT — Theme engine (10 styles)
+       Matches CARD_STYLES[] from BusinessCard.tsx
+  ══════════════════════════════════════════ -->
+  <script>
+    // ═══════════════════════════════════════════════
+    // CARD_STYLES — 10 themes from the React app
+    // MODIFY: change colors/names to add new themes
+    // ═══════════════════════════════════════════════
+    const CARD_STYLES = [
+      {
+        id: 'original-cyan',
+        name: 'Original Cyan & Purple',
+        icon: '💎',
+        accentColor: '#00D8F6',
+        gradientPanel: 'linear-gradient(135deg, rgba(124,92,246,0.85) 0%, rgba(225,29,72,0.85) 50%, rgba(0,216,246,0.85) 100%)',
+        bgLeft: '#090B11',
+        subtextColor: '#94A3B8',
+        glowColor: 'rgba(0,216,246,0.45)',
+        borderAccent: 'rgba(0,216,246,0.5)',
+      },
+      {
+        id: 'gold-amber',
+        name: 'Luxury Gold & Amber',
+        icon: '👑',
+        accentColor: '#F59E0B',
+        gradientPanel: 'linear-gradient(135deg, rgba(120,53,15,0.85) 0%, rgba(217,119,6,0.85) 50%, rgba(245,158,11,0.85) 100%)',
+        bgLeft: '#0C0A06',
+        subtextColor: '#A3A3A3',
+        glowColor: 'rgba(245,158,11,0.45)',
+        borderAccent: 'rgba(245,158,11,0.5)',
+      },
+      {
+        id: 'emerald-teal',
+        name: 'Executive Emerald',
+        icon: '💚',
+        accentColor: '#10B981',
+        gradientPanel: 'linear-gradient(135deg, rgba(6,78,59,0.85) 0%, rgba(5,150,105,0.85) 50%, rgba(16,185,129,0.85) 100%)',
+        bgLeft: '#040C09',
+        subtextColor: '#94A3B8',
+        glowColor: 'rgba(16,185,129,0.45)',
+        borderAccent: 'rgba(16,185,129,0.5)',
+      },
+      {
+        id: 'cyber-magenta',
+        name: 'Cyberpunk Pink',
+        icon: '💖',
+        accentColor: '#F43F5E',
+        gradientPanel: 'linear-gradient(135deg, rgba(136,19,55,0.85) 0%, rgba(190,18,60,0.85) 50%, rgba(244,63,94,0.85) 100%)',
+        bgLeft: '#14080E',
+        subtextColor: '#F1F5F9',
+        glowColor: 'rgba(244,63,94,0.45)',
+        borderAccent: 'rgba(244,63,94,0.5)',
+      },
+      {
+        id: 'royal-blue',
+        name: 'Royal Sapphire',
+        icon: '🔷',
+        accentColor: '#3B82F6',
+        gradientPanel: 'linear-gradient(135deg, rgba(30,58,138,0.85) 0%, rgba(29,78,216,0.85) 50%, rgba(59,130,246,0.85) 100%)',
+        bgLeft: '#070D1D',
+        subtextColor: '#E2E8F0',
+        glowColor: 'rgba(59,130,246,0.45)',
+        borderAccent: 'rgba(59,130,246,0.5)',
+      },
+      {
+        id: 'sunset-orange',
+        name: 'Sunset Crimson',
+        icon: '🌅',
+        accentColor: '#F97316',
+        gradientPanel: 'linear-gradient(135deg, rgba(194,65,12,0.85) 0%, rgba(234,88,12,0.85) 50%, rgba(249,115,22,0.85) 100%)',
+        bgLeft: '#140A05',
+        subtextColor: '#F1F5F9',
+        glowColor: 'rgba(249,115,22,0.45)',
+        borderAccent: 'rgba(249,115,22,0.5)',
+      },
+      {
+        id: 'ultra-violet',
+        name: 'Ultra Violet',
+        icon: '💜',
+        accentColor: '#A78BFA',
+        gradientPanel: 'linear-gradient(135deg, rgba(91,33,182,0.85) 0%, rgba(124,90,237,0.85) 50%, rgba(167,139,250,0.85) 100%)',
+        bgLeft: '#0F091A',
+        subtextColor: '#F1F5F9',
+        glowColor: 'rgba(167,139,250,0.45)',
+        borderAccent: 'rgba(167,139,250,0.5)',
+      },
+      {
+        id: 'pure-white',
+        name: 'Modern Slate',
+        icon: '⚪',
+        accentColor: '#38BDF8',
+        gradientPanel: 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(51,65,85,0.85) 50%, rgba(100,116,139,0.85) 100%)',
+        bgLeft: '#090D16',
+        subtextColor: '#CBD5E1',
+        glowColor: 'rgba(56,189,248,0.45)',
+        borderAccent: 'rgba(56,189,248,0.5)',
+      },
+      {
+        id: 'icy-cyan',
+        name: 'Icy Arctic Cyan',
+        icon: '❄️',
+        accentColor: '#06B6D4',
+        gradientPanel: 'linear-gradient(135deg, rgba(21,94,117,0.85) 0%, rgba(8,145,178,0.85) 50%, rgba(6,182,212,0.85) 100%)',
+        bgLeft: '#061118',
+        subtextColor: '#E0F2FE',
+        glowColor: 'rgba(6,182,212,0.45)',
+        borderAccent: 'rgba(6,182,212,0.5)',
+      },
+      {
+        id: 'rose-gold',
+        name: 'Rose Gold Premium',
+        icon: '🌸',
+        accentColor: '#FB7185',
+        gradientPanel: 'linear-gradient(135deg, rgba(159,18,57,0.85) 0%, rgba(225,29,72,0.85) 50%, rgba(251,113,133,0.85) 100%)',
+        bgLeft: '#170910',
+        subtextColor: '#FFE4E6',
+        glowColor: 'rgba(251,113,133,0.45)',
+        borderAccent: 'rgba(251,113,133,0.5)',
+      },
+    ];
+
+    // ═══════════════════════════════════════════════
+    // Build style picker buttons
+    // ═══════════════════════════════════════════════
+    let activeId = 'original-cyan';
+    const picker = document.getElementById('stylePicker');
+
+    CARD_STYLES.forEach(style => {
+      const btn = document.createElement('button');
+      btn.className = 'style-btn' + (style.id === activeId ? ' active' : '');
+      btn.dataset.id = style.id;
+      btn.innerHTML = `<span style="font-size:14px">${style.icon}</span><span>${style.name}</span>`;
+      btn.style.boxShadow = style.id === activeId ? `0 0 12px ${style.accentColor}50` : 'none';
+      if (style.id === activeId) {
+        btn.style.background = `linear-gradient(135deg, ${style.accentColor}30, ${style.accentColor}15)`;
+        btn.style.border = `2px solid ${style.accentColor}`;
+        btn.style.color = 'white';
+      }
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent card flip when clicking button
+        activeId = style.id;
+        applyTheme(style);
+        // Update all buttons
+        document.querySelectorAll('.style-btn').forEach(b => {
+          const s = CARD_STYLES.find(x => x.id === b.dataset.id);
+          const isActive = b.dataset.id === activeId;
+          b.className = 'style-btn' + (isActive ? ' active' : '');
+          b.style.background = isActive ? `linear-gradient(135deg, ${s.accentColor}30, ${s.accentColor}15)` : 'rgba(15,23,42,0.6)';
+          b.style.border = isActive ? `2px solid ${s.accentColor}` : '1px solid rgba(148,163,184,0.1)';
+          b.style.color = isActive ? 'white' : '#CBD5E1';
+          b.style.fontWeight = isActive ? '800' : '600';
+          b.style.boxShadow = isActive ? `0 0 12px ${s.accentColor}50` : 'none';
+        });
+      });
+      picker.appendChild(btn);
+    });
+
+    // ═══════════════════════════════════════════════
+    // applyTheme() — Updates all card elements with the selected theme
+    // ═══════════════════════════════════════════════
+    function applyTheme(style) {
+      // Front card background
+      const front = document.getElementById('cardFront');
+      front.style.background = style.bgLeft;
+
+      // Front card border & shadow
+      const cardFaces = document.querySelectorAll('.card-face');
+      cardFaces.forEach(f => {
+        f.style.border = `1.5px solid ${style.borderAccent}`;
+        f.style.boxShadow = `0 25px 50px -15px ${style.glowColor}`;
+      });
+      // Card scene hover glow (via card-scene)
+      const cardScene = document.getElementById('cardScene');
+      cardScene.style.setProperty('--glow', style.glowColor);
+
+      // Logo box border + glow
+      document.getElementById('logoBox').style.border = `1.5px solid ${style.accentColor}`;
+      document.getElementById('logoBox').style.boxShadow = `0 0 16px ${style.accentColor}60`;
+
+      // Brand sub color
+      document.getElementById('brandSub').style.color = style.accentColor;
+
+      // Person title color
+      document.getElementById('personTitle').style.color = style.accentColor;
+
+      // Divider bar
+      const div = document.getElementById('personDivider');
+      div.style.background = style.accentColor;
+      div.style.boxShadow = `0 0 10px ${style.accentColor}`;
+
+      // Contact icons
+      ['ci1','ci2','ci3','ci4'].forEach(id => {
+        document.getElementById(id).style.color = style.accentColor;
+      });
+
+      // Right panel overlay
+      document.getElementById('cardRightOverlay').style.background = style.gradientPanel;
+
+      // Back: logo border
+      const backLogo = document.getElementById('backLogo');
+      backLogo.style.border = `1px solid ${style.accentColor}`;
+
+      // Back brand sub
+      document.getElementById('backBrandSub').style.color = style.accentColor;
+
+      // Verified badge
+      const badge = document.getElementById('verifiedBadge');
+      badge.style.background = style.accentColor;
+
+      // Service bullets
+      ['sb1','sb2','sb3','sb4'].forEach(id => {
+        document.getElementById(id).style.color = style.accentColor;
+      });
+
+      // QR label
+      document.getElementById('qrLabelText').style.color = style.accentColor;
+
+      // Footer separator
+      document.getElementById('backFooter').style.borderTop = `1px solid ${style.accentColor}30`;
+
+      // Footer theme label
+      document.getElementById('footerTheme').style.color = style.accentColor;
+      document.getElementById('footerTheme').textContent = `Theme: ${style.name}`;
+
+      // Back card border
+      document.getElementById('cardBack').style.border = `1.5px solid ${style.borderAccent}`;
+      document.getElementById('cardBack').style.boxShadow = `0 30px 60px -15px ${style.glowColor}`;
+
+      // Subtext color for contacts
+      document.querySelectorAll('.contact-item').forEach(el => {
+        el.style.color = style.subtextColor;
+      });
+    }
+
+    // Apply default theme on load
+    applyTheme(CARD_STYLES.find(s => s.id === activeId));
+  </script>
+
+</body>
+</html>

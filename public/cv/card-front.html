@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FCS Technology – Kaarka Shakhsiga (Hore)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      /* Page background matching the React app */
+      background: #0F172A;
+      font-family: 'Inter', sans-serif;
+      padding: 48px 20px;
+    }
+
+    /* Subtle purple glow on page background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Page label */
+    .page-label {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 100px;
+      padding: 6px 18px;
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════════════════════════════
+       CARD SCENE — 3D perspective wrapper
+       Modify: perspective value changes depth
+    ══════════════════════════════════════════ */
+    .card-scene {
+      perspective: 1500px;
+      width: 720px;
+      height: 400px;
+      max-width: 95vw;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════════
+       CARD — The actual card element
+       Modify: border-radius for roundness
+                border for accent line color
+                box-shadow for glow effect
+    ══════════════════════════════════════════ */
+    .card {
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      /* ACCENT COLOR: rgba(0, 216, 246, 0.5) = Cyan */
+      border: 1.5px solid rgba(0, 216, 246, 0.5);
+      overflow: hidden;
+      display: flex;
+      position: relative;
+      /* GLOW SHADOW: rgba(0, 216, 246, 0.45) = Cyan glow */
+      box-shadow:
+        0 25px 50px -15px rgba(0, 216, 246, 0.45),
+        0 0 0 0 transparent;
+      transition: box-shadow 0.4s ease, transform 0.4s ease;
+      /* BACKGROUND: #090B11 = near-black with slight blue tint */
+      background: #090B11;
+    }
+    .card:hover {
+      box-shadow:
+        0 40px 80px -20px rgba(0, 216, 246, 0.45),
+        0 0 45px rgba(0, 216, 246, 0.45);
+    }
+
+    /* ══════════════════════════════════════════
+       TECH GRID TEXTURE (dot grid overlay)
+       Modify: backgroundSize for grid density
+               opacity for visibility
+    ══════════════════════════════════════════ */
+    .card-grid-texture {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.9;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════
+       LEFT SIDE — Contact info panel
+       Modify: flex value to resize left/right ratio
+               padding for inner spacing
+    ══════════════════════════════════════════ */
+    .card-left {
+      /* flex: 1.25 = left side is 55.5% of card width */
+      flex: 1.25;
+      padding: 38px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* ── Brand / Logo Row ── */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Logo container box */
+    .logo-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.95);
+      /* ACCENT BORDER: #00D8F6 = Cyan */
+      border: 1.5px solid #00D8F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* ACCENT GLOW: #00D8F6 = Cyan */
+      box-shadow: 0 0 16px rgba(0, 216, 246, 0.6);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logo-box img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    /* Brand name text */
+    .brand-name {
+      color: #FFFFFF;
+      font-weight: 950;
+      font-size: 22px;
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    /* Brand subtitle — ACCENT COLOR */
+    .brand-sub {
+      /* ACCENT COLOR: #00D8F6 = Cyan */
+      color: #00D8F6;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* ── Person Info Block ── */
+    .person-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Person name */
+    .person-name {
+      color: #FFFFFF;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      line-height: 1.1;
+    }
+
+    /* Person title — ACCENT COLOR */
+    .person-title {
+      /* ACCENT COLOR: #00D8F6 = Cyan */
+      color: #00D8F6;
+      font-size: 15px;
+      font-weight: 750;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    /* Decorative divider bar — ACCENT COLOR */
+    .person-divider {
+      width: 44px;
+      height: 4px;
+      /* ACCENT COLOR: #00D8F6 = Cyan */
+      background: #00D8F6;
+      border-radius: 10px;
+      /* ACCENT GLOW */
+      box-shadow: 0 0 10px #00D8F6;
+    }
+
+    /* ── Contact List ── */
+    .contacts {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      /* SUBTEXT COLOR: #94A3B8 = slate-400 */
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s ease;
+      cursor: default;
+    }
+    .contact-item:hover {
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+
+    /* SVG icon wrapper */
+    .contact-icon {
+      /* ACCENT COLOR: #00D8F6 = Cyan — change to alter icon color */
+      color: #00D8F6;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .contact-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ══════════════════════════════════════════
+       RIGHT SIDE — Photo panel with overlay
+       Modify: flex value for panel width
+               clip-path for the diagonal cut shape
+    ══════════════════════════════════════════ */
+    .card-right {
+      /* flex: 0.95 = right panel is ~44.4% of card width */
+      flex: 0.95;
+      position: relative;
+      /* BACKGROUND IMAGE: Tech/workspace photo from Unsplash */
+      background-image: url('https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&fit=crop&auto=format');
+      background-size: cover;
+      background-position: center;
+      /* Diagonal cut: polygon(left-top%, 100% 0, 100% 100%, 0% 100%, ...) */
+      clip-path: polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%, 12% 75%, 2% 50%, 20% 25%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 38px 32px;
+      z-index: 2;
+      transition: all 0.4s ease;
+    }
+
+    /* Color blend overlay — GRADIENT PANEL
+       This tints the photo with brand colors
+       Modify: gradient colors to change the color blend
+    */
+    .card-right-overlay {
+      position: absolute;
+      inset: 0;
+      /* GRADIENT PANEL: purple → rose → cyan */
+      background: linear-gradient(135deg,
+        rgba(124, 92, 246, 0.85) 0%,
+        rgba(225, 29, 72, 0.85) 50%,
+        rgba(0, 216, 246, 0.85) 100%);
+      mix-blend-mode: multiply;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Glass shine effect on right panel */
+    .card-right-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 60%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* QR code container — top right of photo panel */
+    .qr-container {
+      display: flex;
+      justify-content: flex-end;
+      z-index: 2;
+      position: relative;
+    }
+
+    .qr-box {
+      background: white;
+      padding: 8px;
+      border-radius: 18px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      border: 2px solid rgba(255,255,255,0.9);
+      transition: transform 0.3s ease;
+    }
+    .card:hover .qr-box {
+      transform: scale(1.05) rotate(1deg);
+    }
+    .qr-box img {
+      width: 84px;
+      height: 84px;
+      display: block;
+    }
+
+    /* Scan label — bottom right */
+    .scan-label {
+      text-align: right;
+      z-index: 2;
+      position: relative;
+    }
+    .scan-label span {
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 3px 8px rgba(0,0,0,0.6);
+    }
+
+    /* ══════════════════════════════════════════
+       ACTION BUTTONS
+       Modify: colors, padding, border-radius
+    ══════════════════════════════════════════ */
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Primary button — purple gradient */
+    .btn-primary {
+      background: linear-gradient(135deg, #7C3AED, #4F46E5);
+      color: white;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(124, 58, 237, 0.5);
+    }
+
+    /* Ghost button */
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-2px);
+    }
+
+    /* Gold accent button */
+    .btn-gold {
+      background: rgba(245, 158, 11, 0.12);
+      color: #F59E0B;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .btn-gold:hover {
+      background: rgba(245, 158, 11, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — Mobile scaling
+    ══════════════════════════════════════════ */
+    @media (max-width: 760px) {
+      .card-scene { height: 260px; }
+      .card-left { padding: 22px 24px; }
+      .person-name { font-size: 22px; }
+      .person-title { font-size: 12px; margin-bottom: 10px; }
+      .person-divider { width: 30px; height: 3px; }
+      .brand-name { font-size: 16px; }
+      .logo-box { width: 38px; height: 38px; border-radius: 10px; }
+      .logo-box img { width: 26px; height: 26px; }
+      .contact-item { font-size: 11px; gap: 8px; }
+      .contacts { gap: 7px; }
+      .qr-box img { width: 58px; height: 58px; }
+      .scan-label span { font-size: 9px; letter-spacing: 1.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page label badge -->
+  <div class="page-label">
+    ✦ Kaarka Shakhsiga — Dhinaca Hore
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       BUSINESS CARD FRONT
+       To edit: change text content in the HTML below
+       To change colors: update the CSS variables above
+  ══════════════════════════════════════════ -->
+  <div class="card-scene">
+    <div class="card">
+
+      <!-- Tech dot-grid texture overlay (decorative) -->
+      <div class="card-grid-texture"></div>
+
+      <!-- ── LEFT SIDE: Contact Information Panel ── -->
+      <div class="card-left">
+
+        <!-- Brand / Logo row -->
+        <div class="brand">
+          <div class="logo-box">
+            <!--
+              LOGO IMAGE
+              To change: update src attribute
+              Falls back to "FCS" text if image fails
+            -->
+            <img
+              src="/logo.png"
+              alt="FCS Logo"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'color:#00D8F6;font-weight:900;font-size:16px\'>FCS</span>'"
+            />
+          </div>
+          <div>
+            <!-- Company name — MODIFY: change FCS to your brand name -->
+            <div class="brand-name">FCS</div>
+            <!-- Company tagline — MODIFY: change TECHNOLOGY -->
+            <div class="brand-sub">TECHNOLOGY</div>
+          </div>
+        </div>
+
+        <!-- Person name, title, divider -->
+        <div class="person-info">
+          <!-- MODIFY: Full name -->
+          <div class="person-name">Farah Abdishakur</div>
+          <!-- MODIFY: Job title -->
+          <div class="person-title">Digital Solutions Expert</div>
+          <!-- Decorative accent bar (color controlled by .person-divider CSS) -->
+          <div class="person-divider"></div>
+        </div>
+
+        <!-- Contact information list -->
+        <div class="contacts">
+
+          <!-- Phone -->
+          <div class="contact-item">
+            <span class="contact-icon">
+              <!-- Phone icon SVG -->
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.86 10.7 19.79 19.79 0 01.77 2.1 2 2 0 012.76 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+            </span>
+            <!-- MODIFY: Phone number -->
+            <span>+252 63 713 3499</span>
+          </div>
+
+          <!-- Email -->
+          <div class="contact-item">
+            <span class="contact-icon">
+              <!-- Mail icon SVG -->
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <!-- MODIFY: Email address -->
+            <span>farahabdishakurdahir@gmail.com</span>
+          </div>
+
+          <!-- Website -->
+          <div class="contact-item">
+            <span class="contact-icon">
+              <!-- Globe icon SVG -->
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            </span>
+            <!-- MODIFY: Website URL (display text) -->
+            <span>fcs-tignoolaji.so</span>
+          </div>
+
+          <!-- Location -->
+          <div class="contact-item">
+            <span class="contact-icon">
+              <!-- Map pin icon SVG -->
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <!-- MODIFY: Location -->
+            <span>Borama, Somaliland</span>
+          </div>
+
+        </div>
+      </div><!-- end .card-left -->
+
+      <!-- ── RIGHT SIDE: Photo panel with color overlay ── -->
+      <div class="card-right">
+        <!--
+          COLOR OVERLAY: Changes the tint over the background photo
+          MODIFY: gradient in .card-right-overlay CSS above
+        -->
+        <div class="card-right-overlay"></div>
+        <!-- Glass shine sweep — decorative -->
+        <div class="card-right-shine"></div>
+
+        <!-- QR Code — links to WhatsApp -->
+        <div class="qr-container">
+          <div class="qr-box">
+            <!--
+              QR CODE IMAGE
+              MODIFY: change the 'data' parameter in the URL to change what the QR encodes
+              Current: WhatsApp direct message link
+            -->
+            <img
+              src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fwa.me%2F252637133499%3Ftext%3DAsc%20Farah%2C%20waxaan%20xiisaynayaa%20adeegyada%20FCS%20Technology.&color=0F172A&bgcolor=FFFFFF"
+              alt="WhatsApp QR Code"
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        <!-- Scan to message label -->
+        <div class="scan-label">
+          <!-- MODIFY: Change this label text -->
+          <span>SCAN TO MESSAGE</span>
+        </div>
+      </div><!-- end .card-right -->
+
+    </div><!-- end .card -->
+  </div><!-- end .card-scene -->
+
+  <!-- ══════════════════════════════════════════
+       ACTION BUTTONS
+       MODIFY: href links and button labels
+  ══════════════════════════════════════════ -->
+  <div class="buttons">
+    <!-- WhatsApp link -->
+    <a href="https://wa.me/252637133499?text=Asc%20Farah%2C%20waxaan%20xiisaynayaa%20adeegyadaada." target="_blank" class="btn btn-primary">
+      <!-- WhatsApp icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.524 5.847L.057 23.882a.5.5 0 00.614.641l6.156-1.61A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.892 0-3.663-.522-5.172-1.427l-.371-.224-3.847 1.007.978-3.75-.243-.391A9.959 9.959 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Ku Dalbo WhatsApp
+    </a>
+    <!-- Download vCard -->
+    <a href="card.vcf" download="Farah_Abdishakur.vcf" class="btn btn-ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Degso vCard
+    </a>
+    <!-- Website link -->
+    <a href="https://fcs-tignoolaji.surge.sh/" target="_blank" class="btn btn-ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Website-ka Fur
+    </a>
+    <!-- Link to back side -->
+    <a href="card-back.html" class="btn btn-ghost">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Dhinaca Dambe
+    </a>
+    <!-- Link to 3D card -->
+    <a href="card-3d.html" class="btn btn-gold">
+      ✦ Kaarka 3D
+    </a>
+  </div>
+
+</body>
+</html>

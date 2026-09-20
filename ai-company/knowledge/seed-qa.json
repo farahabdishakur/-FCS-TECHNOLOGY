@@ -1,0 +1,122 @@
+[
+  {
+    "q": ["yaa leh shirkadda", "yaa milkiile", "milkiilaha yaa yahay", "Farah yaa yahay", "who owns the company", "who is the owner"],
+    "a": "FCS Technology waxaa leh Farah Abdishakur, Digital Solutions Expert, oo joogta Borama, Somaliland. Waxaan bixinnaa websites, design, dukumiintiyo (CV, business plan), nidaamyo ganacsi iyo automation.",
+    "en": "FCS Technology is owned by Farah Abdishakur, Digital Solutions Expert, based in Borama, Somaliland. We offer websites, design, documents (CV, business plan), business systems and automation."
+  },
+  {
+    "q": ["maxay tahay FCS Technology", "shirkaddu maxay qabataa", "what is FCS Technology", "what does your company do"],
+    "a": "FCS Technology (Smart Digital Solutions) waa shirkad adeegyo dijital ah: websites, design, dukumiintiyo (CV, business plan), nidaamyo ganacsi (POS, iskuul, huteel, farmasi…) iyo automation.",
+    "en": "FCS Technology (Smart Digital Solutions) is a digital services company: websites, design, documents (CV, business plan), business systems (POS, school, hotel, pharmacy…) and automation."
+  },
+  {
+    "q": ["halkee joogtaan", "meesha xafiiska ah", "xafiis ma leedihiin", "where are you located", "where is your office", "do you have an office"],
+    "a": "Goobta: Borama, Somaliland. Waxaan online ka shaqaynnaa macaamiil Soomaaliya iyo dibadda; nala soo xiriir WhatsApp +252 63 713 3499.",
+    "en": "We are in Borama, Somaliland, and work online with clients in Somalia and abroad. Contact us on WhatsApp +252 63 713 3499."
+  },
+  {
+    "q": ["ma ku bixin karaa qaybo", "lacagta qaybo ma ku bixin karaa", "installments", "can I pay in installments", "pay in parts"],
+    "a": "Habka caadiga ah waa 50% horay iyo 50% marka shaqada la dhammeeyo. Haddii aad rabto habka kale, qor lambarkaaga oo Farah ayaa kuu sheegi doona.",
+    "en": "The standard method is 50% upfront and 50% on completion. If you need another arrangement, leave your number and Farah will get back to you."
+  },
+  {
+    "q": ["ma sameysaan app", "ma dhisaysaan mobile app", "app code ma dhisaysaan", "do you build mobile apps", "do you code apps"],
+    "a": "Mobile App: waxaan sameynaa Design & Prototype (Figma UI/UX, wireframes, iOS+Android screens). Code-ka app-ka ma dhisno (developer ayaa loo baahan yahay). Software ama tool yar oo web-based ah ayaan dhisi karnaa.",
+    "en": "Mobile App: we do the Design & Prototype (Figma UI/UX, wireframes, iOS and Android screens). We do not build the app code (a developer is needed). We can build small web-based software or tools."
+  },
+  {
+    "q": ["domain ma ku jiraa", "hosting ma ku jiraa", "is hosting included", "is domain included"],
+    "a": "WordPress Website-ka hosting kuma jiro; waan kaa caawinaa inaad hesho mid jaban. Nidaamyada ganacsiga bilaha ($/bil) waxay daboolaan server-ka daruuriga ah.",
+    "en": "The WordPress website price does not include hosting; we help you find an affordable one. For business systems the monthly fee covers the cloud server."
+  },
+  {
+    "q": ["mobile-ka ma ka shaqeeyaa", "telefoonka ma ka shaqeeyaa website ku", "is it mobile friendly", "is it responsive"],
+    "a": "Haa, websites-ka iyo nidaamyada waa mobile/tablet responsive.",
+    "en": "Yes, our websites and systems are mobile and tablet responsive."
+  },
+  {
+    "q": ["seo ma ku jiraa", "google ka ma soo baxaa", "does it include seo"],
+    "a": "WordPress Website waxaa ku jira SEO aasaasi (title, meta, sitemap) iyo Google Analytics setup.",
+    "en": "The WordPress website includes basic SEO (title, meta, sitemap) and Google Analytics setup."
+  },
+  {
+    "q": ["cv ATS ma yahay", "is the cv ats friendly", "cv ats"],
+    "a": "Haa, CV-ga waa ATS-friendly, PDF iyo Word, Somali/English/Arabic, 2 revision iyo talooyin LinkedIn.",
+    "en": "Yes, the CV is ATS-friendly, delivered as PDF and Word, in Somali/English/Arabic, with 2 revisions and LinkedIn tips."
+  },
+  {
+    "q": ["logo faylasha noocee ah", "logo faylal ma i siinaysaa", "logo formats", "logo files", "logo svg"],
+    "a": "Logo-ga waxaad heleysaa PNG, SVG, PDF iyo AI faylal, nooc B&W ah, social kit iyo color codes. 3 concept, revision aan xad lahayn, copyright-na wuu kuu yahay.",
+    "en": "The logo comes as PNG, SVG, PDF and AI files, a B&W version, a social kit and colour codes. 3 concepts, unlimited revisions, and full copyright is yours."
+  },
+  {
+    "q": ["internet la'aan ma shaqeeyaa", "offline ma shaqeeyaa", "does it work without internet", "offline mode"],
+    "a": "Cafe/Maqaaxi POS wuxuu leeyahay Offline Mode. Nidaamyada kale, Farah ayaa kuu xaqiijin doona marka aad noo sheegto nooca nidaamka.",
+    "en": "The Cafe/Restaurant POS has an Offline Mode. For other systems, Farah will confirm once you tell us which system you need."
+  },
+  {
+    "q": ["tababar ma bixisaan", "ma la barayaa sida loo isticmaalo", "do you provide training", "training"],
+    "a": "Qaar ka mid ah adeegyada waxaa ku jira tababar: School Management 1 bil tababar, Spreadsheet Automated wuxuu leeyahay tutorial video, chatbot-ka waa la tababaraa FAQ-ga. Farah ayaa kuu sheegi tababarka adeegga aad rabto.",
+    "en": "Some services include training: School Management has 1 month of training, Spreadsheet Automated comes with a tutorial video, and the chatbot is trained on your FAQ. Farah will confirm the training for the service you want."
+  },
+  {
+    "q": ["paypal ma ku bixin karaa", "kaarka ma ku bixin karaa", "can I pay by card", "do you accept paypal"],
+    "a": "Lacagta FCS waxaa lagu qaataa EVC Plus, Hormuud ama Western Union. Dukaanka macaamiilka (WooCommerce) wuxuu taageeraa EVC/PayPal/Stripe: tani waa tayada dukaanka, ma aha habka lacagta FCS. Haddii aad dibadda joogto, qor lambarkaaga oo Farah ayaa kuu sheegi.",
+    "en": "FCS is paid via EVC Plus, Hormuud or Western Union. A WooCommerce store supports EVC/PayPal/Stripe for your own customers; that is a store feature, not how you pay FCS. If you are abroad, leave your number and Farah will advise."
+  },
+  {
+    "q": ["ma bilaash baa", "bilaash ma yahay", "is it free", "do you work for free"],
+    "a": "Adeegyadeenu waa kuwo lacag ah; qiimayaasha liiska ayaa jira (tusaale logo $49, CV $25). Sheeg adeegga aad rabto oo waan kuu sheegayaa qiimihiisa.",
+    "en": "Our services are paid; list prices apply (for example logo $49, CV $25). Tell me the service you want and I will give you its price."
+  },
+  {
+    "q": ["saacadaha shaqada", "goorma la joogaa", "working hours", "when are you open"],
+    "a": "Caawiyaha AI wuxuu ku jawaabaa isla markiiba; Farah ayaa go'aannada muhiimka ah xaqiijiya gudaha 24 saac. Saacado rasmi ah weli lama dejin.",
+    "en": "The AI assistant answers immediately; Farah confirms important decisions within 24 hours. Official opening hours have not been set yet."
+  },
+  {
+    "q": ["heshiis ma la sameeyaa", "maxaa ku jira heshiiska", "is there a contract", "contract"],
+    "a": "Haa. Kadib 50% horay, heshiis ayaa la diyaariyaa: waxa la dalbaday, qiimaha iyo 50/50, waqtiga, revision, lahaanshaha iyo saxiixyo. Farah ayaa dib u eegaya.",
+    "en": "Yes. After the 50% deposit an agreement is prepared: what was ordered, price and 50/50 payment, timeline, revisions, ownership and signatures. Farah reviews it."
+  },
+  {
+    "q": ["shaqada yaa leh", "lahaanshaha shaqada", "who owns the work", "ownership"],
+    "a": "Macaamiilku wuxuu qaataa lahaanshaha shaqada kadib lacagta dhammaystiran.",
+    "en": "You take ownership of the work after the full payment."
+  },
+  {
+    "q": ["immisa revision", "revision intee ah", "how many revisions", "revision policy"],
+    "a": "Revision-ku wuxuu ku xiran yahay adeegga: Logo revision aan xad lahayn; Landing Page, CV, Menu iyo Business Card 2 revision; Mobile App 3; Cover Letter iyo Report 1. Sheeg adeegga oo waan kuu sheegayaa saxda.",
+    "en": "Revisions depend on the service: Logo unlimited; Landing Page, CV, Menu and Business Card 2; Mobile App 3; Cover Letter and Report 1. Tell me the service for the exact number."
+  },
+  {
+    "q": ["bille waa maxay", "bilaha waa maxay", "monthly fee", "what is the monthly fee"],
+    "a": "Bilaha waa kirada server-ka daruuriga ah, database iyo taageero farsamo, waxayna ku dhaqmaan nidaamyada ganacsiga (tusaale Cafe POS $25/bil, School Management $30/bil).",
+    "en": "The monthly fee covers the cloud server, database and technical support for the business systems (for example Cafe POS $25/month, School Management $30/month)."
+  },
+  {
+    "q": ["ma la joojin karaa mashruuca", "joojin", "cancel the project", "can I cancel"],
+    "a": "Joojinta iyo celinta waxaa lagu qeexaa heshiiska. Farah ayaa kuu sharxi doona marka aad noo sheegto xaaladdaada.",
+    "en": "Cancellation and refunds are defined in the agreement. Farah will explain once you tell us your situation."
+  },
+  {
+    "q": ["goorma la bilaabayaa", "immisa waqti ka hor bilaabaysaan", "how soon can you start", "when do you start"],
+    "a": "Shaqada waan bilaabnaa kadib 50% horay iyo xaqiijinta Farah. Waqtiga dhammaystirka wuxuu ku xiran yahay adeegga (tusaale logo 2–3 maalmood, website 5–7 maalmood).",
+    "en": "We start after the 50% deposit and Farah's confirmation. Delivery time depends on the service (for example logo 2–3 days, website 5–7 days)."
+  },
+  {
+    "q": ["xogtayda ma la ilaaliyaa", "xogta ma la wadaagaa", "is my data safe", "privacy"],
+    "a": "Xogta macaamiilka waxaa loo isticmaalaa mashruuca oo keliya, qofna lama wadaagto.",
+    "en": "Customer data is used only for the project and is never shared with anyone."
+  },
+  {
+    "q": ["tirada macaamiisha", "immisa macaamiil baad haysaan", "how many clients do you have", "how many projects have you done"],
+    "a": "Tiro ma sheegno si aanan wax been ah u sheegin. Shaqooyinkeena hore ka eeg bogga Portfolio ee website-ka.",
+    "en": "We don't quote numbers so we never overstate. See our previous work on the Portfolio page of the website."
+  },
+  {
+    "q": ["qof dhab ah la hadal", "Farah la hadli karaa", "talk to a human", "talk to farah", "speak to a person"],
+    "a": "Haa. Farah si toos ah ayaad ula hadli kartaa WhatsApp: +252 63 713 3499. Ama qor magacaaga iyo lambarkaaga halkan, wuuna kuu soo wacayaa.",
+    "en": "Yes. You can talk to Farah directly on WhatsApp: +252 63 713 3499. Or leave your name and number here and he will call you."
+  }
+]

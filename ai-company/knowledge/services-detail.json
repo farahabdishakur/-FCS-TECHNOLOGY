@@ -1,0 +1,362 @@
+{
+  "1": {
+    "description": "Website xirfadleh oo loogu talagalay ganacsi, blog, ama portfolio. Waxaan kuu dhisaynaa goobta web-ka oo casri ah, degdeg u shaqaysa, oo mobile-friendly ah. Waxaa ku jira design-ka, qaybaha muhiimka ah, iyo SEO-ga aasaasiga ah.",
+    "shortDesc": "Business, blog, ama portfolio website oo xirfadleh",
+    "faq": [
+      {
+        "q": "Intee ayay qaadanaysaa in la dhiso website-ka?",
+        "a": "Badanaa 5–7 maalmood xaaladda caadiga ah."
+      },
+      {
+        "q": "Hosting miyaa ku jira qiimaha?",
+        "a": "Hosting kuma jiro, laakiin waxaan kaa caawin karnaa inaad hesho mid jaban oo fiican."
+      },
+      {
+        "q": "Waa la bedeli karaa qoraalka markaan rabaa?",
+        "a": "Haa! WordPress-ka sidaad u rabtid ayaad u bedeli kartaa."
+      }
+    ]
+  },
+  "2": {
+    "description": "Dukaanka online-ka oo buuxa ah. Macaamiishaadu waxay kaga iibsan karaan badeecadahaaga adduunka oo dhan. Lacag-bixinta online (EVC, PayPal), maaraynta alaabta, iyo wax badan oo kale.",
+    "shortDesc": "Dukaan online ah oo macaamiisha kaga iibsan karaan",
+    "faq": [
+      {
+        "q": "Maxay u badan kartaa alaabta?",
+        "a": "Unlimited – WooCommerce waxay taageertaa alaab aan xad lahayn."
+      },
+      {
+        "q": "EVC iyo Hormuud ma ku jiraan?",
+        "a": "Haa, waxaan dejin karnaa EVC Plus iyo Hormuud si toos ah."
+      }
+    ]
+  },
+  "3": {
+    "description": "Bogga hore ee xirfadleh loogu talagalay mashruuc, badeeco, ama adeeg cusub. Landing page waa aalad xoog leh oo macaamiisha ku jiidata oo dalabka kordhisa. Waxaa ku jira CTA, form, iyo animations.",
+    "shortDesc": "Bogga hore ee mashruuc/product cusub – conversion-focused",
+    "faq": [
+      {
+        "q": "Maxay ka duwan tahay website-ka caadiga ah?",
+        "a": "Landing page waa bog keliya oo loogu talagalay in macaamiisha lagu qanciyo iyadoo CTA xoog leh lagu daro."
+      }
+    ]
+  },
+  "4": {
+    "description": "Design, fikrad, iyo prototype-ka app-ka mobile-ka. Waxaan kuu samaynaynaa UI/UX design-ka, wireframes-ka, iyo clickable prototype-ka si aad u aragto sida app-ka u eekaan doono kahor dhisitaanka.",
+    "shortDesc": "UI/UX design iyo prototype app mobile",
+    "faq": [
+      {
+        "q": "Miyaad dhisi kartaa app-ka dhabta ah?",
+        "a": "Design-ka iyo prototype-ka waxaan samaynaynaa. Dhisidda code-ka waxaa loo baahan developer."
+      }
+    ]
+  },
+  "5": {
+    "description": "Calculator, tracker, automation script, ama tool yar oo web-based ah. Waxaan samaynaynaa xalalka farsamo ee kuu gaar ah si ay kuu fududeeyaan shaqada maalinlaha.",
+    "shortDesc": "Calculator, tracker, ama automation tool oo web-based",
+    "faq": [
+      {
+        "q": "Nooca tool-ka maxuu noqon karaa?",
+        "a": "Budget calculator, inventory tracker, booking form, score calculator, iyo wax kasta oo aad u baahato."
+      }
+    ]
+  },
+  "6": {
+    "description": "",
+    "shortDesc": "AI chatbot 24/7 oo macaamiisha u jawaabaya",
+    "faq": [
+      {
+        "q": "Chatbot-ku ma ku hadli karaa Somali?",
+        "a": "Haa, waxaan u tababari karnaa Somali, English, iyo Arabic."
+      }
+    ]
+  },
+  "7": {
+    "description": "Nidaamka kaydinta iyo maaraynta xogta: dukaan, kaydinta macaamiisha, iyo warbixinta. Waxaan samaynaynaa system oo aad ku maamuli karto xogta ganacsigaaga si sahlan.",
+    "shortDesc": "System maaraynta xogta – dukaan, macaamiil, inventory",
+    "faq": [
+      {
+        "q": "Ma ka shaqayn karaa telefoonka?",
+        "a": "Haa, waa mobile-responsive oo ka shaqaysa dhammaan devices-ka."
+      }
+    ]
+  },
+  "8": {
+    "description": "CV/Resume xirfadleh oo kuu gaar ah, qurxoon, oo ATS-friendly (la aqoon karo software shirkadaha). Waxaan ku samaynaa luuqadaha: Somali, English, ama Arabic.",
+    "shortDesc": "CV/Resume casri ah oo shirkadaha loo gudbinayo",
+    "faq": [
+      {
+        "q": "Macluumaadkeyga sidee u dirsadaa?",
+        "a": "Waxaad i WhatsApp-ga ku diri kartaa xogta: magaca, shaqooyinkii, shahaadada, iyo xirfadaha."
+      },
+      {
+        "q": "Miyaad English-ga ku samayn kartaa?",
+        "a": "Haa, waxaan samayn karnaa Somali, English, iyo Arabic."
+      }
+    ]
+  },
+  "9": {
+    "description": "Warqad codsi shaqo oo xirfadleh oo ku habboon shirkad ama xafiis aad codanayso. Waxaan ku qoraa si aad u muujiso awoodahaaga iyo sababta aad u tahay xulashada ugu fiican.",
+    "shortDesc": "Warqad codsi shaqo oo xirfadleh – English/Somali",
+    "faq": [
+      {
+        "q": "Macluumaadka kee baan kuu dirsadaa?",
+        "a": "Shirkadda magaceeda, xirfadahaaga, iyo nooca shaqada aad codsanayso."
+      }
+    ]
+  },
+  "10": {
+    "description": "Portfolio website ama PDF oo muujinaya shaqadaada hore. Loogu talagalay naqshadayaasha, barnaamijyehanada, farshaxamiyiinta, iyo xirfadlayaasha kale. Design qurxoon oo macaamiisha soo jiita.",
+    "shortDesc": "Portfolio website ama PDF oo muujinaya shaqadaada",
+    "faq": [
+      {
+        "q": "Waa maxay kala duwanaanta website-ka iyo PDF-ka?",
+        "a": "Website-ka waa online oo la wadaagi karo link ahaan. PDF-ka waa fayl aad email ama print ku diri karto."
+      }
+    ]
+  },
+  "11": {
+    "description": "Qorshe ganacsiga (business plan) ama soo jeedin (proposal) oo xirfadleh loogu talagalay heshiisyada, maalgashiga, ama barnaamijyada. Waxaa ku jira xisaabaha, jadwalka, iyo SWOT analysis.",
+    "shortDesc": "Business plan ama proposal loogu talagalay maalgashadaha",
+    "faq": [
+      {
+        "q": "Intee bog ayuu leeyahay?",
+        "a": "Badanaa 10–20 bog oo ku xidna baahidaada. Waxaan kugu hagaajin karnaa."
+      }
+    ]
+  },
+  "12": {
+    "description": "Warbixin (report) ama qoraal cilmi-baadhin ah oo xirfadleh. Loogu talagalay shirkadaha, jaamacadaha, hay'adaha, iyo barnaamijyada. Waxaan ku qoraa Somali, English, ama Arabic.",
+    "shortDesc": "Report ama research document oo xirfadleh",
+    "faq": [
+      {
+        "q": "Cilmi-baadhin (research) ma qabanaysaa?",
+        "a": "Haa, waxaan ku samaynaynaa cilmi-baadhin oo aad ku siisaa natiijada."
+      }
+    ]
+  },
+  "13": {
+    "description": "Summad xirfadleh oo ganacsigaaga u gaar ah. Waxaan samaynaynaa logo casri ah oo tarjumaysa munaasabadda ganacsigaaga. Waxaa ku jira dhammaan noocyada faylalka.",
+    "shortDesc": "Logo xirfadleh – 3 concept, unlimited revisions",
+    "faq": [
+      {
+        "q": "Haddaan jeclaan waayo design-ka?",
+        "a": "Waxaan sii wadaa revision-yada ilaa aad ku qanacsantahay – bilaash!"
+      }
+    ]
+  },
+  "14": {
+    "description": "Menu design qurxoon oo loogu talagalay maqaaxi, cafe, ama restaurant. Waxaan samaynaynaa menu oo aad print ama QR code ahaan macaamiisha u bannayn karto.",
+    "shortDesc": "Menu qurxoon – PDF print + QR code digital menu",
+    "faq": [
+      {
+        "q": "Sawirrada cuntada sidee u dirtaa?",
+        "a": "Sawirradaada WhatsApp iga soo dir, ama waxaan isticmaali karnaa stock photos."
+      }
+    ]
+  },
+  "15": {
+    "description": "Poster, banner, flyer, iyo graphics-ka baraha bulshada (Instagram, Facebook, TikTok). Waxaan samaynaynaa sawirada muuqaalka xirfadleh ee ganacsigaaga online u muujiya.",
+    "shortDesc": "Poster, banner, flyer – Instagram, Facebook, TikTok",
+    "faq": [
+      {
+        "q": "Package-yada kee waa ugu fiican?",
+        "a": "5-post package-ku waa mid dhexdhexaad ah. 10-post waxaad $50 ka badbaadisaa mid kasta la barbardhigto."
+      }
+    ]
+  },
+  "16": {
+    "description": "Kaarka ganacsiga (business card) oo xirfadleh oo muujinaya summadda shirkadaada. Waxaan samaynaynaa front & back, print-ready, oo aad ku daabici karto.",
+    "shortDesc": "Business card xirfadleh – front & back, print-ready",
+    "faq": [
+      {
+        "q": "Kaarka xaggee laga daabici karaa?",
+        "a": "PDF-ka ama JPEG-ga waxaad u diri kartaa daabacaad kasta. Waxaan kaa caawin karnaa raadinta daabacaadda."
+      }
+    ]
+  },
+  "17": {
+    "description": "Presentation (PowerPoint ama Google Slides) oo qurxoon loogu talagalay shirkadaha, maalgashadaha, ama jaamacadaha. Waxaan samaynaynaa slides oo xirfadleh oo akhriyaasha soo jiita.",
+    "shortDesc": "PowerPoint / Slides qurxoon – business ama academic",
+    "faq": [
+      {
+        "q": "Google Slides miyaad samayn kartaa?",
+        "a": "Haa, waxaan samayn karnaa PowerPoint ama Google Slides."
+      }
+    ]
+  },
+  "18": {
+    "description": "Sawir xogeed (infographic) oo muujinaya xog ama tirakoob si qurxoon oo la fahmi karo. Loogu talagalay warbixinnada, cilmi-baadhinaha, iyo baraha bulshada.",
+    "shortDesc": "Infographic – xogta/tirakoobka si sawir qurxoon ku muuji",
+    "faq": [
+      {
+        "q": "Xogta sidee u dirsadaa?",
+        "a": "Excel, Word, ama text ahaan WhatsApp ii soo dir, anigu sawirka ka samaynayaa."
+      }
+    ]
+  },
+  "19": {
+    "description": "Brochure ama flyer ganacsi oo xirfadleh loogu talagalay xayeysiiska, bandhigyada, iyo wacdiyaynta adeegyada. Waxaan samaynaynaa noocyo kala duwan: bi-fold, tri-fold, ama hal bog.",
+    "shortDesc": "Brochure ama flyer ganacsi – print & digital",
+    "faq": [
+      {
+        "q": "Nucyada kee ayaan dooranayaa?",
+        "a": "Bi-fold (2 qaybood), tri-fold (3 qaybood), ama hal bog – kaa damqataa baahidaada."
+      }
+    ]
+  },
+  "20": {
+    "description": "Spreadsheet automated ah (Excel ama Google Sheets) oo leh xisaabin, tracking, reports, iyo dashboards. Halkii aad gacanta ku xisaabin jirtay, hadda system-ku wuxuu toos u xisaabiyaa.",
+    "shortDesc": "Excel/Sheets automated – xisaabin, tracking, reports",
+    "faq": [
+      {
+        "q": "Excel ama Google Sheets – kee ka fiican?",
+        "a": "Google Sheets waa free oo online ah. Excel waa powerful laakiin waxaad u baahantahay Microsoft Office."
+      },
+      {
+        "q": "Nidaamkeyga ganacsi waxaad samayn kartaa?",
+        "a": "Haa! Kash adeeg, inventory, payroll, ama wax kasta oo aad u baahato."
+      }
+    ]
+  },
+  "21": {
+    "description": "Sistam dhamaystiran oo loogu talagalay maamulka iskuulada, macalimiinta, ardayda, xaadiriska, imtixaanaadka, iyo lacag-bixinta waalidiinta. Wuxuu si otomaatig ah u soo saaraa kaadhadhka natiijooyinka (Report Cards) iyo risiidhada lacagta.",
+    "shortDesc": "Maamulka iskuulada, ardayda, imtixaanaadka & xaadiriska",
+    "faq": [
+      {
+        "q": "Lacag bixinta billaha ah ee $30 maxay tahay?",
+        "a": "Waa kirada server-ka daruuriga ah (Cloud Hosting), database-ka, iyo taageerada farsamo ee joogtada ah."
+      },
+      {
+        "q": "Imtixaanaadka ma loo dejin karaa nidaamka Soomaaliya?",
+        "a": "Haa, waxaa loo habayn karaa nidaamka dhibcaha (Grading System) ee iskuulkaaga gaarka u ah."
+      }
+    ]
+  },
+  "22": {
+    "description": "Nidaamka maamulka huteelada oo buuxa. Wuxuu kuu suurtagelinayaa qabsashada qolalka (Room Booking), Check-in/Check-out degdeg ah, maamulka adeegyada huteelka, iyo warbixinnada dhaqaalaha.",
+    "shortDesc": "Qabsashada qolalka, check-in/out & xisaabaadka huteelada",
+    "faq": [
+      {
+        "q": "Ma lala xidhi karaa website-ka huteelka?",
+        "a": "Haa, macaamiishaadu waxay toos qolalka uga sii qabsan karaan website-kaaga."
+      },
+      {
+        "q": "Xaashida sharciga macaamiisha (Customer ID) ma lagu kaydin karaa?",
+        "a": "Haa, waxaa lagu kaydin karaa sawirka baasaboorka ama ID-ga macmiilka."
+      }
+    ]
+  },
+  "23": {
+    "description": "Nidaamka POS ee maqaaxiyaha, cafe-yada iyo restaurants-ka. Wuxuu leeyahay Interface taabasho ah (Touch Screen), maamulka dalabaadka jikada (KDS), iyo dabagalka kaydka cuntada.",
+    "shortDesc": "POS degdeg ah, dalabaadka jikada & maamulka kaydka",
+    "faq": [
+      {
+        "q": "Miyuu ka shaqaynayaa ilayska / internet-ka marka uu tago?",
+        "a": "Haa, nidaamku wuxuu leeyahay Offline Mode oo iibku sii shaqaynayo marka internet-ku tago."
+      },
+      {
+        "q": "Printer-ada badan ma taageeraa?",
+        "a": "Haa, jikada iyo barista mid walba printer gaar ah ayaa loo samayn karaa."
+      }
+    ]
+  },
+  "24": {
+    "description": "Sistam dhamaystiran oo lagu maamulo clinic-yada iyo isbitaalada. Wuxuu leeyahay diiwaangelinta bukaanada, ballamaha dhakhaatiirta, natiijooyinka shaybaarka, iyo qaybta farmasiyada.",
+    "shortDesc": "Diiwaanka bukaanada, ballamaha dhakhaatiirta & shaybaarka",
+    "faq": [
+      {
+        "q": "Miyaa loo sameyn karaa akoonno dhakhaatiir kala duwan?",
+        "a": "Haa, dhakhtar kasta wuxuu leeyahay dashboard u gaar ah oo uu ku arko bukaanadiisa."
+      },
+      {
+        "q": "Natiijooyinka shaybaarka ma loo daabici karaa PDF?",
+        "a": "Haa, toos ayaa loogu daabici karaa ama loogu meelayn karaa faylka bukaanka."
+      }
+    ]
+  },
+  "25": {
+    "description": "Nidaamka POS ee dukaamada waaweyn iyo supermarket-yada. Wuxuu taageeraa Barcode Scanning degdeg ah, maaraynta kaydka (Stock), iyo digniinta alaabta dhacayso ama yaraatay.",
+    "shortDesc": "POS, barcode scanning, kaydka alaabta & faa'iidada",
+    "faq": [
+      {
+        "q": "Alaabada oo dhan ma lagu diri karaa Excel?",
+        "a": "Haa, alaab kasta waxaad ku soo shubi kartaa hal mar oo Excel ah (Bulk Import)."
+      },
+      {
+        "q": "Printer-ka risiidhadha ma ku xirmayaa?",
+        "a": "Haa, dhammaan receipt printers-ka 80mm iyo 58mm waa ku xirmayaan."
+      }
+    ]
+  },
+  "26": {
+    "description": "Sistam u gaar ah farmasiyada oo leh digniinta daawooyinka dhacaya (Expiry Date Alerts), maaraynta noocyada daawooyinka, iyo iibka degdega ah.",
+    "shortDesc": "Maamulka daawooyinka, expiry alerts & iibka degdega ah",
+    "faq": [
+      {
+        "q": "Sidee nidaamku igu siinayaa digniinta daawada dhacaysa?",
+        "a": "Wuxuu leeyahay qayb cas oo ku tusaysa daawooyinka 1 bil ama 3 bilood u dhiman yihiin."
+      },
+      {
+        "q": "Miyaa lagu raadin karaa magaca guud (Generic Name)?",
+        "a": "Haa, daawa kasta magaceedii ganacsi iyo magaceedii guud ee sayniska waa lagu raadin karaa."
+      }
+    ]
+  },
+  "27": {
+    "description": "Sistam loogu talagalay maaraynta guryaha, dhismayaasha iyo kiraystayaasha. Wuxuu otomaatig u soo saaraa qaansheegadaha billaha ah, dabagalka bixinta kirada, iyo guryaha bannaan.",
+    "shortDesc": "Maamulka kirada, guryaha bannaan & qaansheegta billaha ah",
+    "faq": [
+      {
+        "q": "Kireystaha fariin miyaa loo diri karaa marka kiradu joogto?",
+        "a": "Haa, toos ayaa WhatsApp ama SMS loogu diri karaa qaansheegta billaha ah."
+      },
+      {
+        "q": "Guryo badan miyaa lagu maamuli karaa?",
+        "a": "Haa, dhismayaal iyo guryo aan xad lahayn ayaa lagu maamuli karaa."
+      }
+    ]
+  },
+  "28": {
+    "description": "Dukaan online ah oo casri ah oo loogu talagalay in macaamiishu si toos ah alaabtaada ugu iibsadaan internet-ka. Wuxuu leeyahay Shopping Cart, Payment Gateways (EVC, Zaad, Credit Card), iyo Order Management.",
+    "shortDesc": "Website buuxa oo wax lagu iibiyo, Cart & EVC Payment",
+    "faq": [
+      {
+        "q": "Miyay leedahay lacag bixin billa ah?",
+        "a": "Maya, waa $300 hal mar ah, sanadkiiba waxaa jira kaliya hosting caadi ah."
+      },
+      {
+        "q": "Alaab intee le'eg ayaa ku shubi karaa?",
+        "a": "Alaab aan xad lahayn ayaa lagu shubi karaa."
+      }
+    ]
+  },
+  "29": {
+    "description": "Maamulka xarunta jimicsiga iyo gym-ka. Wuxuu maamulaa diiwaangelinta xubnaha, xusuusinta dhicitaanka xubinimada (Membership Expiry), iyo la socodka xaadiriska (Attendance).",
+    "shortDesc": "Diiwaanka xubnaha gym-ka, membership alerts & xaadiriska",
+    "faq": [
+      {
+        "q": "Xubinta fariin miyaa loo diri karaa marka xubinimadu dhacdo?",
+        "a": "Haa, nidaamku toos wuxuu xubinta ugu dirayaa fariin xusuusin ah."
+      },
+      {
+        "q": "Card QR Code ah ma loo samayn karaa xubnaha?",
+        "a": "Haa, xubin kasta card leedahay QR code oo lagu scan gareeyo marka ay soo gasho."
+      }
+    ]
+  },
+  "30": {
+    "description": "Sistam u gaar ah harqaanada iyo toleyda ngalka iyo dharka. Wuxuu kaydiyaa cabbirada macaamiisha (Customer Measurements), dabagalka ballanta tolista, iyo risiidhadha lacagaha.",
+    "shortDesc": "Maamulka cabbirada dharka, ballanta tolista & dalabaadka",
+    "faq": [
+      {
+        "q": "Cabbirada macmiilka ma loo kaydin karaa weligeed?",
+        "a": "Haa, macmiil kasta oo soo noqda toos ayaa cabbiradiisii hore loogu soo bixin karaa."
+      },
+      {
+        "q": "Ma ka shaqaynayaa telefoonka gacanta?",
+        "a": "Haa, harqaanduhu wuxuu ku toos isticmaali karaa telefoonkiisa gacanta."
+      }
+    ]
+  }
+}

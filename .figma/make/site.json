@@ -1,0 +1,10 @@
+{
+  "description": "Organizes and customizes WordPress project notes to streamline development and enhance project management for efficient website creation.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

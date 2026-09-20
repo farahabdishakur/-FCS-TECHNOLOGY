@@ -1,0 +1,314 @@
+[
+  {
+    "q": "maxaad bixin kartaa",
+    "re": "30 adeeg"
+  },
+  {
+    "q": "adeegyada ii sheeg",
+    "re": "30 adeeg"
+  },
+  {
+    "q": "What do you offer?",
+    "re": "30 services"
+  },
+  {
+    "q": "Qiimaha website-ku waa immisa?",
+    "re": "\\$299"
+  },
+  {
+    "q": "wordpress website qiimo",
+    "re": "\\$299"
+  },
+  {
+    "q": "logo waa immisa",
+    "re": "\\$49"
+  },
+  {
+    "q": "How much is a logo?",
+    "re": "\\$49"
+  },
+  {
+    "q": "qiimaha CV-ga",
+    "re": "\\$25"
+  },
+  {
+    "q": "cover letter qiimo",
+    "re": "\\$15"
+  },
+  {
+    "q": "business plan immisa",
+    "re": "\\$79"
+  },
+  {
+    "q": "business card qiimaha",
+    "re": "\\$20"
+  },
+  {
+    "q": "menu design qiimo",
+    "re": "\\$35"
+  },
+  {
+    "q": "landing page immisa",
+    "re": "\\$149"
+  },
+  {
+    "q": "dukaan online qiimo",
+    "re": "\\$499"
+  },
+  {
+    "q": "chatbot qiimaha",
+    "re": "\\$399"
+  },
+  {
+    "q": "mobile app qiimo",
+    "re": "\\$349"
+  },
+  {
+    "q": "nidaam iskuul qiimo",
+    "re": "\\$150 \\+ \\$30/bil"
+  },
+  {
+    "q": "huteel nidaam immisa",
+    "re": "\\$200 \\+ \\$50/bil"
+  },
+  {
+    "q": "maqaaxi nidaam qiimaha",
+    "re": "\\$100 \\+ \\$25/bil"
+  },
+  {
+    "q": "farmasi system qiimo",
+    "re": "\\$100 \\+ \\$20/bil"
+  },
+  {
+    "q": "gym system immisa",
+    "re": "\\$100 \\+ \\$25/bil"
+  },
+  {
+    "q": "tailor nidaam qiimaha",
+    "re": "\\$80 \\+ \\$15/bil"
+  },
+  {
+    "q": "spreadsheet automation qiimo",
+    "re": "\\$79"
+  },
+  {
+    "q": "presentation pitch deck qiimo",
+    "re": "\\$59"
+  },
+  {
+    "q": "waqtiga website intee qaadataa",
+    "re": "5–7 maalmood"
+  },
+  {
+    "q": "logo muddo intee ah",
+    "re": "2–3 m"
+  },
+  {
+    "q": "how long does a wordpress website take",
+    "re": "5–7"
+  },
+  {
+    "q": "maxaa ku jira logo",
+    "re": "PNG"
+  },
+  {
+    "q": "what does the wordpress website include",
+    "re": "5 bog"
+  },
+  {
+    "q": "logo revision intee ah",
+    "re": "revision aan xad lahayn"
+  },
+  {
+    "q": "cv revision",
+    "re": "2 revision"
+  },
+  {
+    "q": "sidee lacagta u bixiyaa",
+    "re": "50% horay"
+  },
+  {
+    "q": "how do I pay",
+    "re": "50% upfront"
+  },
+  {
+    "q": "evc ma ku bixin karaa",
+    "re": "EVC Plus"
+  },
+  {
+    "q": "sidee dalab u sameeyaa",
+    "re": "Dalab sameyn"
+  },
+  {
+    "q": "how do I order",
+    "re": "Ordering is simple"
+  },
+  {
+    "q": "lambarka xiriirka",
+    "re": "\\+252 63 713 3499"
+  },
+  {
+    "q": "halkee joogtaan",
+    "re": "Borama"
+  },
+  {
+    "q": "yaa leh shirkadda",
+    "re": "Farah Abdishakur"
+  },
+  {
+    "q": "portfolio ma leedihiin",
+    "re": "Portfolio"
+  },
+  {
+    "q": "ma sameysaan app dhab ah",
+    "re": "Design & Prototype"
+  },
+  {
+    "q": "hosting ma ku jiraa",
+    "re": "hosting"
+  },
+  {
+    "q": "domain included?",
+    "re": "hosting"
+  },
+  {
+    "q": "afaf noocee ah ayaad ka shaqaysaan",
+    "re": "Somali, English"
+  },
+  {
+    "q": "internet la'aan ma shaqeeyaa",
+    "re": "Offline Mode"
+  },
+  {
+    "q": "tababar ma bixisaan",
+    "re": "tababar"
+  },
+  {
+    "q": "shaqada yaa leh",
+    "re": "kadib lacagta dhammaystiran"
+  },
+  {
+    "q": "heshiis ma la sameeyaa",
+    "re": "heshiis"
+  },
+  {
+    "q": "bille waa maxay",
+    "re": "server"
+  },
+  {
+    "q": "pos ma haysaan",
+    "re": "Kee"
+  },
+  {
+    "q": "waxaan rabaa website",
+    "re": "\\$299"
+  },
+  {
+    "q": "waxaan rabaa xogta aan ku dalban lahaa",
+    "re": "30 adeeg"
+  },
+  {
+    "q": "Asc",
+    "re": "caawiyaha AI"
+  },
+  {
+    "q": "mahadsanid",
+    "re": "mudan"
+  },
+  {
+    "q": "adiga qof dhab ah ma tahay",
+    "re": "ma aha qof"
+  },
+  {
+    "q": "taageero ma leedahay kadib",
+    "re": "taageero"
+  },
+  {
+    "q": "kaarka ganacsiga ma sameysaan",
+    "re": "\\$20"
+  },
+  {
+    "q": "ma sameysaan ilaalinta gaadhiga",
+    "unmatched": true
+  },
+  {
+    "q": "maxaad ka qaadataa dalab degdeg ah oo 3 saac ah",
+    "unmatched": true
+  },
+  {
+    "q": "ma haysaan shaqo?",
+    "unmatched": true
+  },
+  {
+    "q": "كم سعر تصميم الشعار؟",
+    "re": "\\$49"
+  },
+  {
+    "q": "كم سعر الموقع",
+    "re": "\\$299"
+  },
+  {
+    "q": "ماذا تقدمون",
+    "re": "30"
+  },
+  {
+    "q": "qimaha logoo",
+    "re": "\\$49"
+  },
+  {
+    "q": "webiste qiimo",
+    "re": "\\$299"
+  },
+  {
+    "q": "imisa yahay wordpres",
+    "re": "\\$299"
+  },
+  {
+    "q": "maxad bixin karta",
+    "re": "30 adeeg"
+  },
+  {
+    "q": "dukan online qimo",
+    "re": "\\$499"
+  },
+  {
+    "q": "kafe system qimo",
+    "re": "\\$100 \\+ \\$25/bil"
+  },
+  {
+    "q": "iskool sistam qiimaha",
+    "re": "\\$150 \\+ \\$30/bil"
+  },
+  {
+    "q": "fadlan qimaha CV",
+    "re": "\\$25"
+  },
+  {
+    "q": "ma sameysaan aap dhab ah",
+    "re": "Design & Prototype"
+  },
+  {
+    "q": "Haddaan jeclaan waayo design-ka logo?",
+    "re": "qanacsantahay"
+  },
+  {
+    "q": "logo waa maxay",
+    "re": "Summad xirfadleh"
+  },
+  {
+    "q": "how much is a logoo",
+    "re": "\\$49"
+  },
+  {
+    "q": "pleas send price for busines card",
+    "re": "\\$20"
+  },
+  {
+    "q": "delivry time for logo",
+    "re": "2–3 days"
+  },
+  {
+    "q": "ma xasuustaa cirka",
+    "unmatched": true
+  }
+]

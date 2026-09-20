@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.env
+.env.local
+*.local
+
+# stale duplicate copy of this project (do not track)
+/FCS-Tignoolaj-main/
+
+# agent-server (has its own .gitignore too, kept here for the root `git add`)
+ai-company/agent-server/node_modules/
+ai-company/agent-server/data/
+ai-company/agent-server/.env
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+
+# internal/confidential business + legal-registration documents (self-marked "Internal / Confidential")
+# only untrack these once you've confirmed the GitHub repo is PRIVATE
+ai-company/FCS-Technology_Qorshaha-Milkiilaha.pdf
+ai-company/FCS-Technology_Qorshaha-Milkiilaha.docx
+ai-company/FCS-Technology_MoTT-Application-Pack.pdf
+ai-company/FCS-Technology_MoTT-Application-Pack.docx
+ai-company/QORSHAHA-SHIRKADDA-SHARCIGA-IYO-XAFIISYADA.md
