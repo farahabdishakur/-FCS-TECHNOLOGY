@@ -123,9 +123,8 @@ export default function Navbar() {
         </ul>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('fcs-chat-open', { detail: { auth: true } }))}
+          <Link
+            to="/login"
             style={{
               background: 'transparent',
               color: '#CBD5E1',
@@ -136,11 +135,12 @@ export default function Navbar() {
               fontSize: 14,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
+              textDecoration: 'none',
             }}
             className="hidden-mobile"
           >
             Soo gal
-          </button>
+          </Link>
 
           <a
             href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Asc, waxaan xiisaynayaa adeegyada FCS Technology. Fadlan ii soo dir faahfaahinta.')}`}
@@ -213,9 +213,8 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('fcs-chat-open', { detail: { auth: true } }))}
+          <Link
+            to="/login"
             style={{
               display: 'block',
               width: '100%',
@@ -227,12 +226,12 @@ export default function Navbar() {
               textAlign: 'center',
               fontWeight: 700,
               fontSize: 15,
-              cursor: 'pointer',
+              textDecoration: 'none',
               marginTop: 4,
             }}
           >
             Soo gal
-          </button>
+          </Link>
           <a
             href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Asc, waxaan xiisaynayaa adeegyada FCS Technology.')}`}
             target="_blank"
