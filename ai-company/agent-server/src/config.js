@@ -37,7 +37,7 @@ export function loadConfig(env = process.env) {
     seedFile: env.SEED_FILE || path.join(ROOT, '..', 'knowledge', 'seed-qa.json'),
     detailFile: env.DETAIL_FILE || path.join(ROOT, '..', 'knowledge', 'services-detail.json'),
     linksFile: env.LINKS_FILE || path.join(ROOT, '..', 'knowledge', 'service-links.json'),
-    siteUrl: env.SITE_URL || 'https://fcs-tignoolaji.surge.sh',
+    siteUrl: env.SITE_URL || 'https://fcs-technology.onrender.com',
     paymentDetails: env.PAYMENT_DETAILS || '',
     adminSyncToken: env.ADMIN_SYNC_TOKEN || '',
     googleClientId: env.GOOGLE_CLIENT_ID || '',
@@ -45,7 +45,7 @@ export function loadConfig(env = process.env) {
     facebookAppSecret: env.FACEBOOK_APP_SECRET || '',
     resendApiKey: env.RESEND_API_KEY || '',
     emailFrom: env.EMAIL_FROM || '',
-    allowedOrigins: (env.ALLOWED_ORIGINS || 'http://localhost:8443,http://localhost:5173,https://fcs-tignoolaji.surge.sh')
+    allowedOrigins: (env.ALLOWED_ORIGINS || 'http://localhost:8443,http://localhost:5173,https://fcs-technology.onrender.com,https://fcs-tignoolaji.surge.sh')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),
