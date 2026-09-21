@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X } from 'lucide-react'
+import { X, User, Mail, Lock } from 'lucide-react'
 
 const API = (import.meta.env.VITE_AGENT_API as string | undefined) || (import.meta.env.DEV ? 'http://localhost:8787' : '')
 const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || ''
@@ -11,21 +11,23 @@ type Props = {
   onAuthed: (reply: string, name: string) => void
 }
 
-const field = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-  <input
-    {...props}
-    style={{
-      width: '100%',
-      background: 'rgba(15,23,42,0.06)',
-      border: '1px solid rgba(15,23,42,0.12)',
-      borderRadius: 10,
-      padding: '11px 14px',
-      fontSize: 14,
-      color: '#0F172A',
-      outline: 'none',
-      marginBottom: 12,
-    }}
-  />
+const field = (props: React.InputHTMLAttributes<HTMLInputElement>, IconCmp: typeof User) => (
+  <div style={{ position: 'relative', marginBottom: 12 }}>
+    <IconCmp size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+    <input
+      {...props}
+      style={{
+        width: '100%',
+        background: 'rgba(15,23,42,0.06)',
+        border: '1px solid rgba(15,23,42,0.12)',
+        borderRadius: 100,
+        padding: '11px 14px 11px 40px',
+        fontSize: 14,
+        color: '#0F172A',
+        outline: 'none',
+      }}
+    />
+  </div>
 )
 
 // Panel-ka is-diiwaangelinta/gelitaanka — qaabka "sliding overlay" ee caanka ah (2 foom oo isku dul jira, overlay-ga
@@ -67,7 +69,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
       if (!g?.accounts?.id || !googleBtnRef.current || cancelled) return
       g.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCredential })
       googleBtnRef.current.innerHTML = ''
-      g.accounts.id.renderButton(googleBtnRef.current, { theme: 'outline', size: 'medium', shape: 'pill', width: 220 })
+      g.accounts.id.renderButton(googleBtnRef.current, { theme: 'outline', size: 'large', shape: 'pill', width: 280 })
     }
     const existing = document.getElementById('google-identity-script') as HTMLScriptElement | null
     if ((window as unknown as { google?: any }).google?.accounts?.id) render()
@@ -145,7 +147,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
 
         {/* Log In form — bilowga wuxuu ku yaal dhinaca bidix; markii signup la doorto wuxuu u dhaqaaqaa midig oo qariyaa */}
         <div
-          className="fcs-auth-form"
+          className={`fcs-auth-form${active ? '' : ' fcs-auth-form-visible'}`}
           style={{
             position: 'absolute',
             top: 0,
@@ -167,14 +169,18 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
           <h2 style={{ color: '#0F172A', fontSize: 22, fontWeight: 900, marginBottom: 6 }}>Soo Gal</h2>
           <p style={{ color: '#64748B', fontSize: 13, marginBottom: 18 }}>Ku soo noqo dalabkaagii hore.</p>
           <form onSubmit={submit}>
-            {field({ type: 'email', placeholder: 'Email', value: email, onChange: (e) => setEmail(e.target.value), required: true })}
-            {field({ type: 'password', placeholder: 'Password', value: password, onChange: (e) => setPassword(e.target.value), required: true })}
+            {field({ type: 'email', placeholder: 'Email', value: email, onChange: (e) => setEmail(e.target.value), required: true }, Mail)}
+            {field({ type: 'password', placeholder: 'Password', value: password, onChange: (e) => setPassword(e.target.value), required: true }, Lock)}
             {!active && error && <div style={{ color: '#DC2626', fontSize: 12.5, marginBottom: 12 }}>{error}</div>}
             <button type="submit" disabled={busy} style={btnStyle(busy)}>
               {busy ? 'Sugaya…' : 'Log In'}
             </button>
           </form>
           {!active && googleBlock}
+          <div className="fcs-auth-dots" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 16 }}>
+            <span style={dotStyle(!active)} />
+            <span style={dotStyle(active)} />
+          </div>
           <p className="fcs-auth-mobile-toggle" style={{ display: 'none', textAlign: 'center', fontSize: 12.5, color: '#64748B', marginTop: 14 }}>
             Account ma lihid weli?{' '}
             <button type="button" onClick={() => setMode('signup')} style={{ background: 'none', border: 'none', color: '#7C3AED', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 12.5 }}>
@@ -185,7 +191,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
 
         {/* Sign Up form — bilowga waa qarsan yahay dhinaca bidix; markii la doorto wuxuu u dhaqaaqaa midig oo muuqdaa */}
         <div
-          className="fcs-auth-form"
+          className={`fcs-auth-form${active ? ' fcs-auth-form-visible' : ''}`}
           style={{
             position: 'absolute',
             top: 0,
@@ -207,15 +213,19 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
           <h2 style={{ color: '#0F172A', fontSize: 22, fontWeight: 900, marginBottom: 6 }}>Samee Account</h2>
           <p style={{ color: '#64748B', fontSize: 13, marginBottom: 18 }}>Si aan dalabkaaga u xaqiijino, kaydi xogtaada.</p>
           <form onSubmit={submit}>
-            {field({ placeholder: 'Magacaaga', value: name, onChange: (e) => setName(e.target.value), required: true })}
-            {field({ type: 'email', placeholder: 'Email', value: email, onChange: (e) => setEmail(e.target.value), required: true })}
-            {field({ type: 'password', placeholder: 'Password (ugu yaraan 8 xaraf)', value: password, onChange: (e) => setPassword(e.target.value), required: true, minLength: 8 })}
+            {field({ placeholder: 'Magacaaga', value: name, onChange: (e) => setName(e.target.value), required: true }, User)}
+            {field({ type: 'email', placeholder: 'Email', value: email, onChange: (e) => setEmail(e.target.value), required: true }, Mail)}
+            {field({ type: 'password', placeholder: 'Password (ugu yaraan 8 xaraf)', value: password, onChange: (e) => setPassword(e.target.value), required: true, minLength: 8 }, Lock)}
             {active && error && <div style={{ color: '#DC2626', fontSize: 12.5, marginBottom: 12 }}>{error}</div>}
             <button type="submit" disabled={busy} style={btnStyle(busy)}>
               {busy ? 'Sugaya…' : 'Sign Up'}
             </button>
           </form>
           {active && googleBlock}
+          <div className="fcs-auth-dots" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 16 }}>
+            <span style={dotStyle(!active)} />
+            <span style={dotStyle(active)} />
+          </div>
           <p className="fcs-auth-mobile-toggle" style={{ display: 'none', textAlign: 'center', fontSize: 12.5, color: '#64748B', marginTop: 14 }}>
             Account horeba ma leedahay?{' '}
             <button type="button" onClick={() => setMode('login')} style={{ background: 'none', border: 'none', color: '#7C3AED', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 12.5 }}>
@@ -226,6 +236,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
 
         {/* Overlay-ga midabka leh — wuxuu u dhaqaaqaa 50%-ka kale, isagoo si isugu xigta u soo bandhigaya labada dhinac */}
         <div
+          className="fcs-auth-overlay"
           style={{
             position: 'absolute',
             top: 0,
@@ -302,7 +313,22 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
         <style>{`
           @media (max-width: 620px) {
             .fcs-auth-card { width: 100vw !important; height: 100vh !important; border-radius: 0 !important; }
-            .fcs-auth-form { width: 100% !important; padding: 32px 24px !important; }
+            .fcs-auth-form {
+              width: 100% !important;
+              padding: 32px 24px !important;
+              position: relative !important;
+              transform: none !important;
+              opacity: 0 !important;
+              height: 0 !important;
+              overflow: hidden !important;
+              pointer-events: none !important;
+            }
+            .fcs-auth-form.fcs-auth-form-visible {
+              opacity: 1 !important;
+              height: 100% !important;
+              overflow-y: auto !important;
+              pointer-events: auto !important;
+            }
             .fcs-auth-overlay { display: none !important; }
             .fcs-auth-mobile-toggle { display: block !important; }
           }
@@ -318,12 +344,21 @@ const btnStyle = (busy: boolean): React.CSSProperties => ({
   color: 'white',
   border: 'none',
   padding: 13,
-  borderRadius: 10,
+  borderRadius: 100,
   fontWeight: 700,
   fontSize: 14,
   cursor: busy ? 'default' : 'pointer',
   opacity: busy ? 0.7 : 1,
   marginBottom: 4,
+  boxShadow: '0 8px 20px rgba(124,58,237,0.35)',
+})
+
+const dotStyle = (active: boolean): React.CSSProperties => ({
+  width: active ? 18 : 6,
+  height: 6,
+  borderRadius: 100,
+  background: active ? '#7C3AED' : 'rgba(15,23,42,0.15)',
+  transition: 'all 0.3s ease',
 })
 
 const ghostBtnStyle: React.CSSProperties = {
