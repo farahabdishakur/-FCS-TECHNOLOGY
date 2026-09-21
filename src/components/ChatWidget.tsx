@@ -88,8 +88,9 @@ export default function ChatWidget() {
   // oo ay ku qabsadaan magaca/sawirka shaqaalaha la doortay — chat-ku wuxuu isla markiiba u muuqdaa mid gaar ah.
   useEffect(() => {
     const onOpen = (e: Event) => {
-      const detail = (e as CustomEvent<{ prefill?: string; persona?: Persona }>).detail
+      const detail = (e as CustomEvent<{ prefill?: string; persona?: Persona; auth?: boolean }>).detail
       setOpen(true)
+      if (detail?.auth) setShowAuth(true)
       if (detail?.prefill) setInput(detail.prefill)
       if (detail?.persona) {
         setPersona(detail.persona)

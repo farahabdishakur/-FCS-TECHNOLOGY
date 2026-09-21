@@ -123,6 +123,25 @@ export default function Navbar() {
         </ul>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('fcs-chat-open', { detail: { auth: true } }))}
+            style={{
+              background: 'transparent',
+              color: '#CBD5E1',
+              border: '1px solid rgba(148, 163, 184, 0.3)',
+              padding: '9px 18px',
+              borderRadius: 10,
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            className="hidden-mobile"
+          >
+            Soo gal
+          </button>
+
           <a
             href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Asc, waxaan xiisaynayaa adeegyada FCS Technology. Fadlan ii soo dir faahfaahinta.')}`}
             target="_blank"
@@ -194,6 +213,26 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('fcs-chat-open', { detail: { auth: true } }))}
+            style={{
+              display: 'block',
+              width: '100%',
+              background: 'rgba(148, 163, 184, 0.1)',
+              border: '1px solid rgba(148, 163, 184, 0.25)',
+              color: '#CBD5E1',
+              padding: '14px',
+              borderRadius: 12,
+              textAlign: 'center',
+              fontWeight: 700,
+              fontSize: 15,
+              cursor: 'pointer',
+              marginTop: 4,
+            }}
+          >
+            Soo gal
+          </button>
           <a
             href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Asc, waxaan xiisaynayaa adeegyada FCS Technology.')}`}
             target="_blank"
