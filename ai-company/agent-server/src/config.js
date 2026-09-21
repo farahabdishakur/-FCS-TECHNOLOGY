@@ -37,7 +37,11 @@ export function loadConfig(env = process.env) {
     seedFile: env.SEED_FILE || path.join(ROOT, '..', 'knowledge', 'seed-qa.json'),
     detailFile: env.DETAIL_FILE || path.join(ROOT, '..', 'knowledge', 'services-detail.json'),
     linksFile: env.LINKS_FILE || path.join(ROOT, '..', 'knowledge', 'service-links.json'),
-    siteUrl: env.SITE_URL || 'https://fcs-technology.onrender.com',
+    // Hardcoded qasab ah (ma laha env override) — Render env var SITE_URL waxay ku dhex hartay qiimihii hore
+    // (fcs-tignoolaji.surge.sh, mid la joojiyay) isla markaana Render dashboard-ka lama saxi karin (UI-gu ma
+    // jawaabo automation-ka); macaamiisha waxaa loo dirayay linkiyo dhintay. Ha ku beddelin `env.SITE_URL ||`
+    // mar dambe ilaa Render env var-ka la saxo oo la hubiyo.
+    siteUrl: 'https://fcs-technology.onrender.com',
     paymentDetails: env.PAYMENT_DETAILS || '',
     adminSyncToken: env.ADMIN_SYNC_TOKEN || '',
     googleClientId: env.GOOGLE_CLIENT_ID || '',
@@ -45,10 +49,20 @@ export function loadConfig(env = process.env) {
     facebookAppSecret: env.FACEBOOK_APP_SECRET || '',
     resendApiKey: env.RESEND_API_KEY || '',
     emailFrom: env.EMAIL_FROM || '',
-    allowedOrigins: (env.ALLOWED_ORIGINS || 'http://localhost:8443,http://localhost:5173,https://fcs-technology.onrender.com,https://fcs-tignoolaji.surge.sh')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean),
+    // Isugeyn (union), ma aha bedelaad — ALLOWED_ORIGINS (Render) waxay ku dari kartaa origin dheeraad ah, laakiin
+    // kuwan qasabka ah (website-ka dhabta ah + local dev) had iyo jeer way ku jiraan, xitaa haddii env var-ku
+    // qiime qadiim ah hayo (isla sabab ah ee siteUrl kore).
+    allowedOrigins: [
+      ...new Set([
+        'http://localhost:8443',
+        'http://localhost:5173',
+        'https://fcs-technology.onrender.com',
+        ...String(env.ALLOWED_ORIGINS || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      ]),
+    ],
     llm: {
       provider: env.LLM_PROVIDER || (env.LLM_API_KEY ? 'gemini' : 'none'),
       apiKey: env.LLM_API_KEY || '',
