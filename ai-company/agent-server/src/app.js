@@ -33,9 +33,12 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
     knowledge.reload()
   }
 
+  // SITE_URL waa isla website-ka dhabta ah (isticmaalka kale ee cfg), sidaas darteed waxaa la isku halleyn karaa
+  // xitaa haddii ALLOWED_ORIGINS aan si sax ah loo dejin — ha ka dhigin xal keliya ee ALLOWED_ORIGINS, laakiin waa
+  // shabakad badbaado ah oo aan u baahnayn Render dashboard marka SITE_URL horeba sax yahay.
   const cors = (req, res) => {
     const origin = req.headers.origin
-    if (origin && cfg.allowedOrigins.includes(origin)) {
+    if (origin && (cfg.allowedOrigins.includes(origin) || origin === cfg.siteUrl)) {
       res.setHeader('access-control-allow-origin', origin)
       res.setHeader('vary', 'origin')
     }
