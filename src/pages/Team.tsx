@@ -1,79 +1,6 @@
-import { Sparkles, MessageCircle, ShieldCheck } from 'lucide-react'
-
-const avatar = (seed: string) => `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}&backgroundColor=7c3aed,4f46e5,a78bfa,06b6d4&radius=20`
-
-const team = [
-  {
-    name: 'Ikraan',
-    role: 'Xiriirka & Fahamka Baahida',
-    dept: 'INTAKE',
-    blurb: "Waxay ku dhagaysataa baahidaada si xushmad leh, kadibna kuu weydiisaa isla su'aalaha muhiimka ah ilaa ay si sax ah u fahmato waxa aad rabto.",
-    color: '#06B6D4',
-  },
-  {
-    name: 'Cabdiraxmaan',
-    role: 'Maamulaha Iibka',
-    dept: 'IIBINTA',
-    blurb: 'Wuxuu kuu sheegaa qiimaha, waqtiga iyo adeegga kuugu habboon si degdeg ah — hal-abuur badan, mana kaa qariyo faahfaahin.',
-    color: '#7C3AED',
-  },
-  {
-    name: 'Nadiifo',
-    role: 'Ilaaliyaha Amniga',
-    dept: 'AMNIGA',
-    blurb: 'Wax kastoo dhinaca lacagta, heshiisyada iyo xogta macaamiisha ah, marka hore ayay hubisaa inay ammaan yihiin ka hor inta aan la gudbin.',
-    color: '#EF4444',
-  },
-  {
-    name: 'Xasan',
-    role: 'Maamulaha Maaliyadda',
-    dept: 'MAALIYADDA',
-    blurb: 'Sax ah oo aan iska dayn — ma xaqiijiyo lacag ilaa uu isagu (iyo Farah) ka eego akoonka dhabta ah.',
-    color: '#22C55E',
-  },
-  {
-    name: 'Faadumo',
-    role: 'Xarunta Heshiisyada',
-    dept: 'SIYAASADDA',
-    blurb: 'Waxay diyaarisaa heshiisyada iyo qoraallada sharciga ah, si labada dhinac -- adiga iyo macaamiilka -- xaqiijiyaan waxa la isugu heshiiyay.',
-    color: '#F59E0B',
-  },
-  {
-    name: 'Maxamed',
-    role: 'Hubiyaha Tayada',
-    dept: 'HAWLGALKA',
-    blurb: 'Indho-yaqaan faahfaahinta ah — ka hor inta shaqadu aan gaarin macaamiisha, wuu hubiyaa in wax kastaa sax yahay.',
-    color: '#A78BFA',
-  },
-  {
-    name: 'Sagal',
-    role: 'Taageeraha Macaamiisha',
-    dept: 'TAAGEERADA',
-    blurb: 'Naxariis iyo dulqaad badan — kaaga jirta xitaa marka mashruucu dhamaaday, haddii su’aal ama caqabad kale soo baxdo.',
-    color: '#EC4899',
-  },
-  {
-    name: 'Yoonis',
-    role: 'Kaaliyaha Guud',
-    dept: 'CAAWINTA',
-    blurb: 'Wuxuu diyaariyaa qabyada shaqada (CV, qorshe ganacsi, warbixin) oo kuu xasuusiya wixii socda si aanad wax uga dhicin.',
-    color: '#06B6D4',
-  },
-  {
-    name: 'Deeqa',
-    role: 'Maamulaha Suuq-geynta',
-    dept: 'SUUQ-GEYNTA',
-    blurb: 'Firfircoon oo hal-abuur badan — waxay diyaarisaa qoraallada bulshada iyo aragtiyaha suuqa ee toddobaad kasta.',
-    color: '#F59E0B',
-  },
-  {
-    name: 'Xamse',
-    role: 'Isku-duwaha Guud',
-    dept: 'MASKAXDA',
-    blurb: 'Isagu ayaa shaqada u qaybiya xafiiska ku habboon marka aad wax na weydiiso — si aadan meel kasta isu weydiin.',
-    color: '#4F46E5',
-  },
-]
+import { Link } from 'react-router-dom'
+import { Sparkles, MessageCircle, ShieldCheck, ArrowRight } from 'lucide-react'
+import { avatar, team } from '../data/team'
 
 export default function Team() {
   const openChat = (prefill: string, persona: { name: string; role: string; avatar: string }) => {
@@ -120,6 +47,9 @@ export default function Team() {
       </section>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#4ADE80', fontSize: 12.5, fontWeight: 800, letterSpacing: '0.08em', marginBottom: 14 }}>
+          <ShieldCheck size={14} /> MAAMULKA
+        </div>
         {/* Founder card */}
         <div
           style={{
@@ -131,7 +61,7 @@ export default function Team() {
             border: '1px solid rgba(124, 58, 237, 0.25)',
             borderRadius: 24,
             padding: 32,
-            marginBottom: 48,
+            marginBottom: 56,
           }}
         >
           <img
@@ -140,14 +70,16 @@ export default function Team() {
             style={{ width: 120, height: 120, borderRadius: 20, objectFit: 'cover', border: '2px solid rgba(124, 58, 237, 0.4)' }}
           />
           <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#4ADE80', fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-              <ShieldCheck size={14} /> AASAASAHA & AGAASIMAHA
-            </div>
             <h3 style={{ color: '#F8FAFC', fontSize: 24, fontWeight: 800, marginBottom: 6 }}>Farah Abdishakur</h3>
+            <div style={{ color: '#A78BFA', fontSize: 14, fontWeight: 700, marginBottom: 10 }}>Aasaasaha & Isku-duwaha Guud</div>
             <p style={{ color: '#94A3B8', fontSize: 15, lineHeight: 1.6, maxWidth: 620 }}>
               Isagu ayaa xaqiijiya go'aan kasta oo lacag, heshiis ama qiimo ah. Kooxda hoose waxay kaa caawiyaan si degdeg ah wax loogu qabto, laakiin isagaa mas'uulka ugu dambeeya ee FCS Technology.
             </p>
           </div>
+        </div>
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#A78BFA', fontSize: 12.5, fontWeight: 800, letterSpacing: '0.08em', marginBottom: 14 }}>
+          <Sparkles size={14} /> SHAQAALAHA AI (10 XAFIIS)
         </div>
 
         {/* Team grid */}
@@ -160,7 +92,7 @@ export default function Team() {
         >
           {team.map((m) => (
             <div
-              key={m.name}
+              key={m.office}
               style={{
                 background: 'rgba(30, 41, 59, 0.6)',
                 border: '1px solid rgba(148, 163, 184, 0.12)',
@@ -181,12 +113,14 @@ export default function Team() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              <img
-                src={avatar(m.name)}
-                alt={m.name}
-                style={{ width: 92, height: 92, borderRadius: '50%', background: 'rgba(15,23,42,0.6)', marginBottom: 16 }}
-              />
-              <h3 style={{ color: '#F8FAFC', fontSize: 18, fontWeight: 800, marginBottom: 2 }}>{m.name}</h3>
+              <Link to={`/team/${m.office}`} style={{ textDecoration: 'none' }}>
+                <img
+                  src={avatar(m.name)}
+                  alt={m.name}
+                  style={{ width: 92, height: 92, borderRadius: '50%', background: 'rgba(15,23,42,0.6)', marginBottom: 16 }}
+                />
+                <h3 style={{ color: '#F8FAFC', fontSize: 18, fontWeight: 800, marginBottom: 2 }}>{m.name}</h3>
+              </Link>
               <div style={{ color: '#CBD5E1', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{m.role}</div>
               <span
                 style={{
@@ -203,26 +137,50 @@ export default function Team() {
                 {m.dept}
               </span>
               <p style={{ color: '#94A3B8', fontSize: 13.5, lineHeight: 1.6, marginBottom: 20, minHeight: 66 }}>{m.blurb}</p>
-              <button
-                onClick={() =>
-                  openChat(`Waxaan rabaa inaan ${m.name} wax weydiiyo oo ku saabsan ${m.role}.`, { name: m.name, role: m.role, avatar: avatar(m.name) })
-                }
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  background: 'rgba(124, 58, 237, 0.12)',
-                  border: '1px solid rgba(124, 58, 237, 0.3)',
-                  color: '#A78BFA',
-                  padding: '9px 18px',
-                  borderRadius: 100,
-                  fontWeight: 700,
-                  fontSize: 13,
-                  cursor: 'pointer',
-                }}
-              >
-                <MessageCircle size={14} /> La Hadal
-              </button>
+              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                <Link
+                  to={`/team/${m.office}`}
+                  style={{
+                    flex: 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    background: 'transparent',
+                    border: '1px solid rgba(148, 163, 184, 0.25)',
+                    color: '#CBD5E1',
+                    padding: '9px 14px',
+                    borderRadius: 100,
+                    fontWeight: 700,
+                    fontSize: 12.5,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Bogga <ArrowRight size={13} />
+                </Link>
+                <button
+                  onClick={() =>
+                    openChat(`Waxaan rabaa inaan ${m.name} wax weydiiyo oo ku saabsan ${m.role}.`, { name: m.name, role: m.role, avatar: avatar(m.name) })
+                  }
+                  style={{
+                    flex: 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    background: 'rgba(124, 58, 237, 0.12)',
+                    border: '1px solid rgba(124, 58, 237, 0.3)',
+                    color: '#A78BFA',
+                    padding: '9px 14px',
+                    borderRadius: 100,
+                    fontWeight: 700,
+                    fontSize: 12.5,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <MessageCircle size={14} /> La Hadal
+                </button>
+              </div>
             </div>
           ))}
         </div>

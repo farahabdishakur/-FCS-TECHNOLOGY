@@ -7,6 +7,7 @@ import ServiceDetail from './pages/ServiceDetail'
 import Portfolio from './pages/Portfolio'
 import Card3D from './pages/Card3D'
 import Team from './pages/Team'
+import OfficeProfile from './pages/OfficeProfile'
 import Login from './pages/Login'
 import Admin from './pages/Admin'
 import ChatWidget from './components/ChatWidget'
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/cv/card-3d.html" element={<Card3D />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/team" element={<Team />} />
+        <Route path="/team/:office" element={<OfficeProfile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/fcs-panel-7391" element={<Admin />} />
         <Route path="*" element={<Home />} />
