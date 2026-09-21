@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, MessageCircle, ShieldCheck, ArrowRight } from 'lucide-react'
-import { avatar, team } from '../data/team'
+import { Sparkles, MessageCircle, ShieldCheck, ArrowRight, Workflow } from 'lucide-react'
+import { avatar, team, teamByOffice } from '../data/team'
+
+// Socodka dalabka dhabta ah (orchestrator.js) — Xamse ayaa kala saara, Ikraan/Cabdiraxmaan/Xasan/Faadumo/Maxamed/Sagal
+// waa tallaabooyinka isku xigxiga ee dalab kasta marayo; Nadiifo waxay hubisaa amniga gudaha, Deeqa/Yoonis waxay
+// taageeraan si aan tooska ahayn (suuq-geyn + qabyo shaqo), sidaas darteed lama darin socodka.
+const FLOW = ['maskax', 'intake', 'sales', 'maaliyad', 'siyaasad', 'hawlgal', 'taageero']
 
 export default function Team() {
   const openChat = (prefill: string, persona: { name: string; role: string; avatar: string }) => {
@@ -183,6 +188,41 @@ export default function Team() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Sidee ay u shaqeeyaan — socodka dalabka dhabta ah, xafiis ilaa xafiis */}
+        <div style={{ marginTop: 56, background: 'rgba(30, 41, 59, 0.4)', border: '1px solid rgba(148, 163, 184, 0.12)', borderRadius: 24, padding: 32 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#06B6D4', fontSize: 12.5, fontWeight: 800, letterSpacing: '0.08em', marginBottom: 10 }}>
+            <Workflow size={14} /> SIDEE AY U SHAQEEYAAN
+          </div>
+          <p style={{ color: '#94A3B8', fontSize: 14, lineHeight: 1.7, maxWidth: 720, marginBottom: 24 }}>
+            Xafiisyada kuma shaqeeyaan gooni-gooni ah — dalab kastaa wuxuu mara tallaabooyin isku xigxiga, xafiis kastana
+            wuxuu qabtaa qaybtiisa ka hor inta uu kuu gudbin xafiiska xiga. Xamse ayaa marka hore kala saara xafiiska
+            ugu habboon su'aashaada — sidaas darteed meel kastoo aad ka qorto, jawaabta saxda ah ayaad heli.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            {FLOW.map((office, i) => {
+              const m = teamByOffice(office)
+              if (!m) return null
+              return (
+                <div key={office} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Link
+                    to={`/team/${office}`}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(15,23,42,0.5)', border: `1px solid ${m.color}30`, borderRadius: 100, padding: '6px 14px 6px 6px', textDecoration: 'none' }}
+                  >
+                    <img src={avatar(m.name)} alt={m.name} style={{ width: 28, height: 28, borderRadius: '50%' }} />
+                    <span style={{ color: '#F1F5F9', fontSize: 12.5, fontWeight: 700 }}>{m.name}</span>
+                  </Link>
+                  {i < FLOW.length - 1 && <ArrowRight size={14} color="#475569" />}
+                </div>
+              )
+            })}
+          </div>
+          <p style={{ color: '#64748B', fontSize: 12.5, marginTop: 18 }}>
+            Isla mar ahaan: <strong style={{ color: '#94A3B8' }}>Nadiifo</strong> ayaa gudaha ka hubisa amniga dalab kasta, halka{' '}
+            <strong style={{ color: '#94A3B8' }}>Deeqa</strong> iyo <strong style={{ color: '#94A3B8' }}>Yoonis</strong> ay
+            taageeraan suuq-geynta iyo qabyada shaqada.
+          </p>
         </div>
       </div>
     </div>
