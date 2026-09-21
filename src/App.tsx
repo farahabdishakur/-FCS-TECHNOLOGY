@@ -20,6 +20,13 @@ function GlobalChatWidget() {
   return <ChatWidget />
 }
 
+// Bogga /chat waa dhererka buuxa ee shaashadda (100vh, sida ChatGPT) — footer-ka guud kuma habboona.
+function GlobalFooter() {
+  const location = useLocation()
+  if (location.pathname.startsWith('/chat')) return null
+  return <Footer />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -39,7 +46,7 @@ export default function App() {
         <Route path="/fcs-panel-7391" element={<Admin />} />
         <Route path="*" element={<Home />} />
       </Routes>
-      <Footer />
+      <GlobalFooter />
       <GlobalChatWidget />
     </BrowserRouter>
   )
