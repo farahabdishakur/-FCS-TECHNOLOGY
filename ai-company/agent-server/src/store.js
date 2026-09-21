@@ -147,12 +147,54 @@ export function createStore(dir) {
     return u
   }
 
-  const createUser = ({ name, email, passwordHash = null, provider = 'password' }) => {
+  const createUser = ({ name, email, passwordHash = null, provider = 'password', emailVerified = provider !== 'password' }) => {
     const id = nextId('user')
-    db.users[id] = { id, name, email, passwordHash, provider, createdAt: Date.now(), deletedAt: null }
+    db.users[id] = {
+      id,
+      name,
+      email,
+      passwordHash,
+      provider,
+      createdAt: Date.now(),
+      deletedAt: null,
+      emailVerified,
+      verifyCode: null,
+      verifyCodeExpires: 0,
+      verifyAttempts: 0,
+    }
     emailIndex.set(email, id)
     save()
     return db.users[id]
+  }
+
+  // Koodhka xaqiijinta (4 xaraf, 15 daqiiqo, ugu badnaan 5 isku day) — password-based accounts kaliya
+  // (Google/Facebook waxay la yimaadaan email horeba la xaqiijiyay, sidaas darteed uma baahna).
+  const setVerifyCode = (id, code) => {
+    const u = db.users[id]
+    if (!u) return null
+    u.verifyCode = code
+    u.verifyCodeExpires = Date.now() + 15 * 60 * 1000
+    u.verifyAttempts = 0
+    save()
+    return u
+  }
+
+  const VERIFY_RESULT = { ok: 'ok', wrong: 'wrong', expired: 'expired', locked: 'locked' }
+  const checkVerifyCode = (id, code) => {
+    const u = db.users[id]
+    if (!u || !u.verifyCode) return VERIFY_RESULT.expired
+    if (u.verifyAttempts >= 5) return VERIFY_RESULT.locked
+    if (Date.now() > u.verifyCodeExpires) return VERIFY_RESULT.expired
+    if (String(code) !== u.verifyCode) {
+      u.verifyAttempts++
+      save()
+      return VERIFY_RESULT.wrong
+    }
+    u.emailVerified = true
+    u.verifyCode = null
+    u.verifyAttempts = 0
+    save()
+    return VERIFY_RESULT.ok
   }
 
   const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
@@ -204,5 +246,8 @@ export function createStore(dir) {
     listUsers,
     deleteUser,
     restoreUser,
+    setVerifyCode,
+    checkVerifyCode,
+    VERIFY_RESULT,
   }
 }

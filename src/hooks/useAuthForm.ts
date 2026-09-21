@@ -15,6 +15,8 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [pendingCode, setPendingCode] = useState(false)
+  const [code, setCode] = useState('')
   const googleBtnRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -119,6 +121,30 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
       const path = mode === 'signup' ? '/api/auth/register' : '/api/auth/login'
       const body = mode === 'signup' ? { sessionId, name, email, password } : { sessionId, email, password }
       const res = await fetch(`${API}${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      const data: { reply?: string; name?: string; error?: string; needsVerification?: boolean } = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Khalad ayaa dhacay.')
+      if (data.needsVerification) {
+        setPendingCode(true)
+        return
+      }
+      onAuthed(data.reply || '', data.name || name)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const submitCode = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setBusy(true)
+    try {
+      const res = await fetch(`${API}/api/auth/verify-email`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ sessionId, code }),
+      })
       const data: { reply?: string; name?: string; error?: string } = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.error || 'Khalad ayaa dhacay.')
       onAuthed(data.reply || '', data.name || name)
@@ -129,5 +155,33 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
     }
   }
 
-  return { mode, setMode, name, setName, email, setEmail, password, setPassword, error, busy, submit, googleBtnRef, facebookLogin }
+  const resendCode = async () => {
+    setError('')
+    try {
+      await fetch(`${API}/api/auth/resend-code`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sessionId }) })
+    } catch {
+      /* silent — user can just try again */
+    }
+  }
+
+  return {
+    mode,
+    setMode,
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    busy,
+    submit,
+    googleBtnRef,
+    facebookLogin,
+    pendingCode,
+    code,
+    setCode,
+    submitCode,
+    resendCode,
+  }
 }

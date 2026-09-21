@@ -1,5 +1,5 @@
 // Password hashing (scrypt, built-in Node crypto — 0 dependency, isla habka mashruucan). Ha isticmaalin MD5/SHA plain.
-import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto'
+import { scryptSync, randomBytes, timingSafeEqual, randomInt } from 'node:crypto'
 
 const KEYLEN = 64
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,3 +29,6 @@ export function validateRegistration({ name, email, password }) {
 }
 
 export const normalizeEmail = (email) => String(email || '').trim().toLowerCase()
+
+// Koodhka xaqiijinta email-ka (4 xaraf) — randomInt (crypto-secure) halkii Math.random, si midna aan loo saadaalin karin.
+export const generateVerifyCode = () => String(randomInt(0, 10000)).padStart(4, '0')

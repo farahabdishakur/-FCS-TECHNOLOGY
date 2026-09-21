@@ -467,7 +467,7 @@ test('POST /api/auth/facebook: app_id khaldan (token laga qaatay app kale) waa l
   }
 })
 
-test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh', async () => {
+test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh, xaqiijinta email-ka (koodh 4 xaraf)', async () => {
   const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
   const app = createApp(cfg, { notify: () => {} })
   await new Promise((r) => app.server.listen(0, r))
@@ -480,11 +480,30 @@ test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh
     const s1 = sid()
     const reg = await post('/api/auth/register', { sessionId: s1, name: 'Xasan', email: 'Xasan@Gmail.com', password: 'supersecret1' })
     assert.equal(reg.status, 200)
-    assert.equal((await reg.json()).name, 'Xasan')
-    assert.equal(app.store.db.sessions[s1].userEmail, 'xasan@gmail.com')
+    const regBody = await reg.json()
+    assert.equal(regBody.needsVerification, true)
+    assert.equal(regBody.name, 'Xasan')
+    assert.equal(app.store.db.sessions[s1].userEmail, undefined, 'lama xaqiijin weli, session lama xidhin')
 
     const dupe = await post('/api/auth/register', { sessionId: sid(), name: 'Xasan 2', email: 'xasan@gmail.com', password: 'anotherpass1' })
     assert.equal(dupe.status, 409)
+
+    const user = app.store.findUserByEmail('xasan@gmail.com')
+    assert.equal(user.emailVerified, false)
+    const realCode = user.verifyCode
+    assert.match(realCode, /^\d{4}$/)
+
+    const wrongCode = await post('/api/auth/verify-email', { sessionId: s1, code: realCode === '1234' ? '4321' : '1234' })
+    assert.equal(wrongCode.status, 401)
+
+    const okVerify = await post('/api/auth/verify-email', { sessionId: s1, code: realCode })
+    assert.equal(okVerify.status, 200)
+    assert.equal((await okVerify.json()).name, 'Xasan')
+    assert.equal(app.store.db.sessions[s1].userEmail, 'xasan@gmail.com')
+    assert.equal(app.store.findUserByEmail('xasan@gmail.com').emailVerified, true)
+
+    const reuseCode = await post('/api/auth/verify-email', { sessionId: s1, code: realCode })
+    assert.equal(reuseCode.status, 400, 'koodh la isticmaalay dib looma isticmaali karo')
 
     const wrongPw = await post('/api/auth/login', { sessionId: sid(), email: 'xasan@gmail.com', password: 'wrong-password' })
     assert.equal(wrongPw.status, 401)
@@ -492,11 +511,35 @@ test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh
     const s2 = sid()
     const login = await post('/api/auth/login', { sessionId: s2, email: 'xasan@gmail.com', password: 'supersecret1' })
     assert.equal(login.status, 200)
-    assert.equal((await login.json()).name, 'Xasan')
-    assert.equal(app.store.db.sessions[s2].userId, app.store.db.sessions[s1].userId)
+    const loginBody = await login.json()
+    assert.equal(loginBody.name, 'Xasan')
+    assert.equal(loginBody.needsVerification, undefined, 'account horeba waa la xaqiijiyay, mar dambe lama weydiiyo')
+    assert.equal(app.store.db.sessions[s2].userId, user.id)
 
-    const passHash = app.store.findUserByEmail('xasan@gmail.com').passwordHash
+    const passHash = user.passwordHash
     assert.ok(!passHash.includes('supersecret1'), 'password lama kaydin qoraal cad (plaintext)')
+  } finally {
+    app.server.close()
+  }
+})
+
+test('POST /api/auth/verify-email: 5 isku day oo khalad ah wuu xidhaa (rate-limit gaar ah, koodhku waa 4 xaraf oo kaliya)', async () => {
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {} })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  const post = (path, body) => fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+  try {
+    const s1 = sid()
+    await post('/api/auth/register', { sessionId: s1, name: 'Sagal', email: 'sagal@gmail.com', password: 'supersecret1' })
+    const realCode = app.store.findUserByEmail('sagal@gmail.com').verifyCode
+    const wrong = realCode === '0000' ? '9999' : '0000'
+    for (let i = 0; i < 5; i++) {
+      const r = await post('/api/auth/verify-email', { sessionId: s1, code: wrong })
+      assert.equal(r.status, 401)
+    }
+    const locked = await post('/api/auth/verify-email', { sessionId: s1, code: realCode })
+    assert.equal(locked.status, 429, 'shan isku day oo khalad ah kadib, koodhka saxda ahna waa la diidayaa')
   } finally {
     app.server.close()
   }

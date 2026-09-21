@@ -59,10 +59,26 @@ export default function Login() {
     setWelcomeName(authedName || 'adiga')
     setTimeout(() => navigate('/'), 1400)
   }
-  const { mode, setMode, name, setName, email, setEmail, password, setPassword, error, busy, submit, googleBtnRef, facebookLogin } = useAuthForm(
-    idRef.current,
-    onAuthed,
-  )
+  const {
+    mode,
+    setMode,
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    busy,
+    submit,
+    googleBtnRef,
+    facebookLogin,
+    pendingCode,
+    code,
+    setCode,
+    submitCode,
+    resendCode,
+  } = useAuthForm(idRef.current, onAuthed)
   const signup = mode === 'signup'
 
   useEffect(() => {
@@ -138,6 +154,43 @@ export default function Login() {
                 </div>
                 <h2 style={{ color: '#0F172A', fontSize: 22, fontWeight: 900, marginBottom: 8 }}>Ku soo dhawoow, {welcomeName}!</h2>
                 <p style={{ color: '#64748B', fontSize: 13.5 }}>Waad soo gashay. Waxaan kuu wadnaa bogga hore…</p>
+              </div>
+            ) : pendingCode ? (
+              <div className="fcs-login-fade" style={{ textAlign: 'center' }}>
+                <Mail size={32} color="#7C3AED" style={{ marginBottom: 14 }} />
+                <h2 style={{ color: '#0F172A', fontSize: 22, fontWeight: 900, marginBottom: 8 }}>Hubi Email-kaaga</h2>
+                <p style={{ color: '#64748B', fontSize: 13.5, marginBottom: 22 }}>Waxaan u dirnay koodh 4 xaraf ah email-kaaga. Geli si aad u dhammaystirto.</p>
+                <form onSubmit={submitCode} style={{ maxWidth: 220, margin: '0 auto' }}>
+                  <input
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    placeholder="0000"
+                    inputMode="numeric"
+                    maxLength={4}
+                    required
+                    style={{
+                      width: '100%',
+                      textAlign: 'center',
+                      letterSpacing: '0.5em',
+                      fontSize: 22,
+                      fontWeight: 800,
+                      background: 'rgba(15,23,42,0.05)',
+                      border: '1px solid rgba(15,23,42,0.12)',
+                      borderRadius: 100,
+                      padding: '13px 16px',
+                      color: '#0F172A',
+                      outline: 'none',
+                      marginBottom: 14,
+                    }}
+                  />
+                  {error && <div style={{ color: '#DC2626', fontSize: 12.5, marginBottom: 12 }}>{error}</div>}
+                  <button type="submit" disabled={busy || code.length !== 4} style={btnStyle(busy)}>
+                    {busy ? 'Sugaya…' : 'Xaqiiji'}
+                  </button>
+                </form>
+                <button type="button" onClick={resendCode} style={{ background: 'none', border: 'none', color: '#7C3AED', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 12.5, marginTop: 16 }}>
+                  Koodh dib ii soo dir
+                </button>
               </div>
             ) : (
               <div key={mode} className="fcs-login-fade">

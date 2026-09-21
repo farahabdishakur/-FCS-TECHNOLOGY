@@ -11,7 +11,8 @@ import { createRateLimiter } from './guard.js'
 import { buildKnowledgeData, applyRowsToBrainText } from './servicesSync.js'
 import { verifyGoogleIdToken } from './googleAuth.js'
 import { verifyFacebookAccessToken } from './facebookAuth.js'
-import { hashPassword, verifyPassword, validateRegistration, normalizeEmail } from './auth.js'
+import { hashPassword, verifyPassword, validateRegistration, normalizeEmail, generateVerifyCode } from './auth.js'
+import { sendVerifyCodeEmail } from './emailSend.js'
 
 const SESSION_ID = /^[A-Za-z0-9_-]{16,64}$/
 
@@ -120,6 +121,18 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
 
       const authIp = () => req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
 
+      // Xaqiijinta email-ka (koodh 4 xaraf ah) — password-based accounts kaliya, ka hor inta aan bindAuthedSession
+      // la yeedhin. Google/Facebook uma baahna (emailkoodu horeba wuu la xaqiijiyay provider-ka).
+      const issueVerification = async (user) => {
+        const code = generateVerifyCode()
+        store.setVerifyCode(user.id, code)
+        try {
+          await sendVerifyCodeEmail({ to: user.email, name: user.name, code }, cfg, fetchImpl)
+        } catch (e) {
+          store.log('verify_email_error', { message: e.message, userId: user.id })
+        }
+      }
+
       if (req.method === 'POST' && url.pathname === '/api/auth/google') {
         let body
         try {
@@ -186,8 +199,11 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         if (store.findUserByEmail(email)) return json(res, 409, { error: 'Email-kan horeba waa la isticmaalay. Isku day "Soo gal" halkeeda.' })
         const { salt, hash } = hashPassword(password)
         const user = store.createUser({ name: String(name).trim(), email, passwordHash: `${salt}:${hash}` })
-        const reply = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
-        return json(res, 200, { reply, name: user.name })
+        await issueVerification(user)
+        const session = store.getSession(sessionId)
+        session.pendingVerifyUserId = user.id
+        store.save()
+        return json(res, 200, { needsVerification: true, name: user.name })
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/login') {
@@ -206,8 +222,54 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         if (!user || !salt || !verifyPassword(password, salt, hash)) {
           return json(res, 401, { error: 'Email-ka ama password-ka waa khalad.' })
         }
+        if (!user.emailVerified) {
+          await issueVerification(user)
+          const session = store.getSession(sessionId)
+          session.pendingVerifyUserId = user.id
+          store.save()
+          return json(res, 200, { needsVerification: true, name: user.name })
+        }
         const reply = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
         return json(res, 200, { reply, name: user.name })
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/verify-email') {
+        if (!authLimiter.allow(authIp())) return json(res, 429, { error: 'Fadlan yara sug, isku day badan ayaad samaysay.' })
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 512))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId, code } = body || {}
+        if (!SESSION_ID.test(sessionId || '') || !/^\d{4}$/.test(String(code || ''))) return json(res, 400, { error: 'bad request' })
+        const session = store.getSession(sessionId)
+        const user = session.pendingVerifyUserId ? store.db.users[session.pendingVerifyUserId] : null
+        if (!user) return json(res, 400, { error: 'Wax koodh ah lagu sugayo ma jiro. Isku day mar kale isdiiwaangelinta.' })
+        const result = store.checkVerifyCode(user.id, code)
+        if (result === 'wrong') return json(res, 401, { error: 'Koodhku waa khalad. Isku day mar kale.' })
+        if (result === 'expired') return json(res, 410, { error: 'Koodhku wuu dhacay. Codso mid cusub.' })
+        if (result === 'locked') return json(res, 429, { error: 'Isku day badan oo khalad ah. Codso koodh cusub.' })
+        delete session.pendingVerifyUserId
+        const reply = await bindAuthedSession(sessionId, { name: user.name, email: user.email, userId: user.id })
+        return json(res, 200, { reply, name: user.name })
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/resend-code') {
+        if (!authLimiter.allow(authIp())) return json(res, 429, { error: 'Fadlan yara sug, isku day badan ayaad samaysay.' })
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 256))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId } = body || {}
+        if (!SESSION_ID.test(sessionId || '')) return json(res, 400, { error: 'bad request' })
+        const session = store.getSession(sessionId)
+        const user = session.pendingVerifyUserId ? store.db.users[session.pendingVerifyUserId] : null
+        if (!user) return json(res, 400, { error: 'Wax koodh ah lagu sugayo ma jiro.' })
+        await issueVerification(user)
+        return json(res, 200, { ok: true })
       }
 
       // Admin: liiska macaamiisha iska diiwaan-galiyay (email/password/Google) + tirtir/soo-celi (soft-delete).

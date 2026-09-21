@@ -30,6 +30,54 @@ type Props = {
   onAuthed: (reply: string, name: string) => void
 }
 
+type CodeStepProps = {
+  code: string
+  setCode: (v: string) => void
+  error: string
+  busy: boolean
+  onSubmit: (e: React.FormEvent) => void
+  onResend: () => void
+}
+
+const CodeStep = ({ code, setCode, error, busy, onSubmit, onResend }: CodeStepProps) => (
+  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px', textAlign: 'center' }}>
+    <Mail size={32} color="#7C3AED" style={{ marginBottom: 14 }} />
+    <h2 style={{ color: '#0F172A', fontSize: 20, fontWeight: 900, marginBottom: 6 }}>Hubi Email-kaaga</h2>
+    <p style={{ color: '#64748B', fontSize: 13, marginBottom: 20, maxWidth: 320 }}>Waxaan u dirnay koodh 4 xaraf ah email-kaaga. Geli si aad u dhammaystirto.</p>
+    <form onSubmit={onSubmit} style={{ width: '100%', maxWidth: 220 }}>
+      <input
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+        placeholder="0000"
+        inputMode="numeric"
+        maxLength={4}
+        required
+        style={{
+          width: '100%',
+          textAlign: 'center',
+          letterSpacing: '0.5em',
+          fontSize: 22,
+          fontWeight: 800,
+          background: 'rgba(15,23,42,0.06)',
+          border: '1px solid rgba(15,23,42,0.12)',
+          borderRadius: 100,
+          padding: '12px 14px',
+          color: '#0F172A',
+          outline: 'none',
+          marginBottom: 12,
+        }}
+      />
+      {error && <div style={{ color: '#DC2626', fontSize: 12.5, marginBottom: 12 }}>{error}</div>}
+      <button type="submit" disabled={busy || code.length !== 4} style={btnStyle(busy)}>
+        {busy ? 'Sugaya…' : 'Xaqiiji'}
+      </button>
+    </form>
+    <button type="button" onClick={onResend} style={{ background: 'none', border: 'none', color: '#7C3AED', fontWeight: 700, cursor: 'pointer', padding: 0, fontSize: 12.5, marginTop: 14 }}>
+      Koodh dib ii soo dir
+    </button>
+  </div>
+)
+
 const field = (props: React.InputHTMLAttributes<HTMLInputElement>, IconCmp: typeof User) => (
   <div style={{ position: 'relative', marginBottom: 12 }}>
     <IconCmp size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
@@ -53,10 +101,26 @@ const field = (props: React.InputHTMLAttributes<HTMLInputElement>, IconCmp: type
 // midabka lihina wuu u dhaqaaqaa dhinac ilaa dhinaca kale). Waxaa la soo bandhigaa marka dalabku u baahdo in
 // macaamiilku la xaqiijiyo (ChatWidget) — Sign Up, Log In, Google ama Facebook, dhammaantoodba isla backend-ka.
 export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
-  const { mode, setMode, name, setName, email, setEmail, password, setPassword, error, busy, submit, googleBtnRef, facebookLogin } = useAuthForm(
-    sessionId,
-    onAuthed,
-  )
+  const {
+    mode,
+    setMode,
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    busy,
+    submit,
+    googleBtnRef,
+    facebookLogin,
+    pendingCode,
+    code,
+    setCode,
+    submitCode,
+    resendCode,
+  } = useAuthForm(sessionId, onAuthed)
   const active = mode === 'signup' // "right-panel-active" ee qaabka caadiga ah
 
   const socialBlock = (GOOGLE_CLIENT_ID || FACEBOOK_APP_ID) && (
@@ -104,6 +168,10 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
           <X size={16} />
         </button>
 
+        {pendingCode ? (
+          <CodeStep code={code} setCode={setCode} error={error} busy={busy} onSubmit={submitCode} onResend={resendCode} />
+        ) : (
+          <>
         {/* Log In form — bilowga wuxuu ku yaal dhinaca bidix; markii signup la doorto wuxuu u dhaqaaqaa midig oo qariyaa */}
         <div
           className={`fcs-auth-form${active ? '' : ' fcs-auth-form-visible'}`}
@@ -272,6 +340,8 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
             </div>
           </div>
         </div>
+          </>
+        )}
 
         <style>{`
           @media (max-width: 620px) {
