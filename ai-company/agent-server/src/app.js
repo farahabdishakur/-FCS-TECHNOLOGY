@@ -10,6 +10,7 @@ import { createOrchestrator } from './orchestrator.js'
 import { createRateLimiter } from './guard.js'
 import { buildKnowledgeData, applyRowsToBrainText } from './servicesSync.js'
 import { verifyGoogleIdToken } from './googleAuth.js'
+import { verifyFacebookAccessToken } from './facebookAuth.js'
 import { hashPassword, verifyPassword, validateRegistration, normalizeEmail } from './auth.js'
 
 const SESSION_ID = /^[A-Za-z0-9_-]{16,64}$/
@@ -140,6 +141,31 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         const email = normalizeEmail(profile.email)
         let user = store.findUserByEmail(email)
         if (!user) user = store.createUser({ name: profile.name, email, provider: 'google' })
+        const reply = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name || profile.name })
+      }
+
+      if (req.method === 'POST' && url.pathname === '/api/auth/facebook') {
+        let body
+        try {
+          body = JSON.parse(await readBody(req, 16 * 1024))
+        } catch (e) {
+          return json(res, e.status || 400, { error: 'bad request' })
+        }
+        const { sessionId, accessToken } = body || {}
+        if (!SESSION_ID.test(sessionId || '') || typeof accessToken !== 'string' || !accessToken) {
+          return json(res, 400, { error: 'bad request' })
+        }
+        let profile
+        try {
+          profile = await verifyFacebookAccessToken(accessToken, cfg.facebookAppId, cfg.facebookAppSecret, fetchImpl)
+        } catch (e) {
+          store.log('facebook_auth_error', { message: e.message })
+          return json(res, 401, { error: e.message || 'facebook sign-in failed' })
+        }
+        const email = normalizeEmail(profile.email)
+        let user = store.findUserByEmail(email)
+        if (!user) user = store.createUser({ name: profile.name, email, provider: 'facebook' })
         const reply = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
         return json(res, 200, { reply, name: user.name || profile.name })
       }

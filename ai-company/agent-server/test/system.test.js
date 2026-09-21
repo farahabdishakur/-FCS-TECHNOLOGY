@@ -425,6 +425,48 @@ test('POST /api/auth/google: aud khaldan (client ID kale) waa la diidaa', async 
   }
 })
 
+test('POST /api/auth/facebook: token sax ah wuu abuuraa/soo galiyaa user-ka', async () => {
+  const fakeFetch = async (url) => {
+    const u = String(url)
+    if (u.includes('graph.facebook.com/debug_token')) {
+      return new Response(JSON.stringify({ data: { is_valid: true, app_id: 'FBID123' } }), { status: 200 })
+    }
+    if (u.includes('graph.facebook.com/me')) {
+      return new Response(JSON.stringify({ id: '999', name: 'Sahra Cali', email: 'sahra@fb.com' }), { status: 200 })
+    }
+    throw new Error('unexpected fetch: ' + u)
+  }
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), facebookAppId: 'FBID123', facebookAppSecret: 'shh', llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {}, fetchImpl: fakeFetch })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  try {
+    const res = await fetch(base + '/api/auth/facebook', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sessionId: sid(), accessToken: 'good-token' }) })
+    assert.equal(res.status, 200)
+    const out = await res.json()
+    assert.equal(out.name, 'Sahra Cali')
+    const user = app.store.findUserByEmail('sahra@fb.com')
+    assert.ok(user, 'Facebook sign-in waa in uu abuuraa user record')
+    assert.equal(user.provider, 'facebook')
+  } finally {
+    app.server.close()
+  }
+})
+
+test('POST /api/auth/facebook: app_id khaldan (token laga qaatay app kale) waa la diidaa', async () => {
+  const fakeFetch = async () => new Response(JSON.stringify({ data: { is_valid: true, app_id: 'SOME-OTHER-APP' } }), { status: 200 })
+  const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), facebookAppId: 'FBID123', facebookAppSecret: 'shh', llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
+  const app = createApp(cfg, { notify: () => {}, fetchImpl: fakeFetch })
+  await new Promise((r) => app.server.listen(0, r))
+  const base = `http://127.0.0.1:${app.server.address().port}`
+  try {
+    const res = await fetch(base + '/api/auth/facebook', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sessionId: sid(), accessToken: 'forged' }) })
+    assert.equal(res.status, 401)
+  } finally {
+    app.server.close()
+  }
+})
+
 test('POST /api/auth/register + /api/auth/login: account dhab ah oo password leh', async () => {
   const cfg = { ...loadConfig({}), dataDir: mkdtempSync(path.join(tmpdir(), 'fcs-')), llm: { provider: 'none', apiKey: '', model: '', baseUrl: '', dailyLimit: 100, timeoutMs: 1000 } }
   const app = createApp(cfg, { notify: () => {} })

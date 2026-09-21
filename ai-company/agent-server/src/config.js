@@ -41,6 +41,8 @@ export function loadConfig(env = process.env) {
     paymentDetails: env.PAYMENT_DETAILS || '',
     adminSyncToken: env.ADMIN_SYNC_TOKEN || '',
     googleClientId: env.GOOGLE_CLIENT_ID || '',
+    facebookAppId: env.FACEBOOK_APP_ID || '',
+    facebookAppSecret: env.FACEBOOK_APP_SECRET || '',
     allowedOrigins: (env.ALLOWED_ORIGINS || 'http://localhost:8443,http://localhost:5173,https://fcs-tignoolaji.surge.sh')
       .split(',')
       .map((s) => s.trim())

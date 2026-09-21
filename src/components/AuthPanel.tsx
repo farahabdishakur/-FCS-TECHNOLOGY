@@ -1,9 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, User, Mail, Lock } from 'lucide-react'
+import { X, User, Mail, Lock, Check } from 'lucide-react'
 
 const API = (import.meta.env.VITE_AGENT_API as string | undefined) || (import.meta.env.DEV ? 'http://localhost:8787' : '')
 const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || ''
+const FACEBOOK_APP_ID = (import.meta.env.VITE_FACEBOOK_APP_ID as string | undefined) || ''
 const EASE = 'transform 0.6s ease-in-out, opacity 0.5s ease-in-out'
+
+const SERVICES = ['Websites & Tech', 'Design & Graphics', 'Dukumiinti & CV']
+
+const BrandList = () => (
+  <div style={{ textAlign: 'left', margin: '4px 0 20px' }}>
+    {SERVICES.map((s) => (
+      <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, opacity: 0.9, marginBottom: 6 }}>
+        <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Check size={10} />
+        </span>
+        {s}
+      </div>
+    ))}
+  </div>
+)
+
+const FacebookMark = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+    <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
+  </svg>
+)
 
 type Props = {
   sessionId: string
@@ -32,7 +54,7 @@ const field = (props: React.InputHTMLAttributes<HTMLInputElement>, IconCmp: type
 
 // Panel-ka is-diiwaangelinta/gelitaanka — qaabka "sliding overlay" ee caanka ah (2 foom oo isku dul jira, overlay-ga
 // midabka lihina wuu u dhaqaaqaa dhinac ilaa dhinaca kale). Waxaa la soo bandhigaa marka dalabku u baahdo in
-// macaamiilku la xaqiijiyo (ChatWidget) — Sign Up, Log In, ama Google, sadexdaba isla backend-ka.
+// macaamiilku la xaqiijiyo (ChatWidget) — Sign Up, Log In, Google ama Facebook, dhammaantoodba isla backend-ka.
 export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
   const [mode, setMode] = useState<'login' | 'signup'>('signup')
   const [name, setName] = useState('')
@@ -88,6 +110,55 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
     }
   }, [sessionId, mode])
 
+  useEffect(() => {
+    if (!FACEBOOK_APP_ID) return
+    const existing = document.getElementById('facebook-jssdk') as HTMLScriptElement | null
+    const fbReady = () => (window as unknown as { FB?: any }).FB
+    if (fbReady() || existing) return
+    ;(window as unknown as { fbAsyncInit?: () => void }).fbAsyncInit = () => {
+      fbReady().init({ appId: FACEBOOK_APP_ID, cookie: false, xfbml: false, version: 'v19.0' })
+    }
+    const script = document.createElement('script')
+    script.id = 'facebook-jssdk'
+    script.src = 'https://connect.facebook.net/en_US/sdk.js'
+    script.async = true
+    script.defer = true
+    document.head.appendChild(script)
+  }, [])
+
+  const facebookLogin = () => {
+    const FB = (window as unknown as { FB?: any }).FB
+    if (!FB) {
+      setError('Facebook weli lama diyaarin, fadlan yara sug oo isku day mar kale.')
+      return
+    }
+    setError('')
+    FB.login(
+      async (response: { status: string; authResponse?: { accessToken: string } }) => {
+        if (response.status !== 'connected' || !response.authResponse) {
+          setError('Facebook sign-in lama dhammaystirin.')
+          return
+        }
+        setBusy(true)
+        try {
+          const r = await fetch(`${API}/api/auth/facebook`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ sessionId, accessToken: response.authResponse.accessToken }),
+          })
+          const data: { reply?: string; name?: string; error?: string } = await r.json().catch(() => ({}))
+          if (!r.ok) throw new Error(data.error || 'Facebook sign-in failed')
+          onAuthed(data.reply || '', data.name || '')
+        } catch (e) {
+          setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
+        } finally {
+          setBusy(false)
+        }
+      },
+      { scope: 'email' },
+    )
+  }
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -106,14 +177,20 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
     }
   }
 
-  const googleBlock = GOOGLE_CLIENT_ID && (
+  const socialBlock = (GOOGLE_CLIENT_ID || FACEBOOK_APP_ID) && (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0 12px', color: '#94A3B8', fontSize: 11 }}>
         <div style={{ flex: 1, height: 1, background: 'rgba(15,23,42,0.1)' }} />
         AMA
         <div style={{ flex: 1, height: 1, background: 'rgba(15,23,42,0.1)' }} />
       </div>
-      <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center', minHeight: 40 }} />
+      {GOOGLE_CLIENT_ID && <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center', minHeight: 40, marginBottom: FACEBOOK_APP_ID ? 10 : 0 }} />}
+      {FACEBOOK_APP_ID && (
+        <button type="button" onClick={facebookLogin} disabled={busy} style={facebookBtnStyle(busy)}>
+          <FacebookMark />
+          Continue with Facebook
+        </button>
+      )}
     </>
   )
 
@@ -176,7 +253,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
               {busy ? 'Sugaya…' : 'Log In'}
             </button>
           </form>
-          {!active && googleBlock}
+          {!active && socialBlock}
           <div className="fcs-auth-dots" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 16 }}>
             <span style={dotStyle(!active)} />
             <span style={dotStyle(active)} />
@@ -221,7 +298,7 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
               {busy ? 'Sugaya…' : 'Sign Up'}
             </button>
           </form>
-          {active && googleBlock}
+          {active && socialBlock}
           <div className="fcs-auth-dots" style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 16 }}>
             <span style={dotStyle(!active)} />
             <span style={dotStyle(active)} />
@@ -278,8 +355,10 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
                 transform: active ? 'translateX(0)' : 'translateX(-20%)',
               }}
             >
+              <img src="/logo.png" alt="FCS Technology" style={{ width: 40, height: 40, borderRadius: 10, marginBottom: 14 }} />
               <h3 style={{ fontSize: 20, fontWeight: 900, marginBottom: 10 }}>Ku Soo Dhawoow!</h3>
-              <p style={{ fontSize: 13, opacity: 0.9, lineHeight: 1.6, marginBottom: 20 }}>Account horeba ma leedahay? Soo gal si aad u sii wadato.</p>
+              <p style={{ fontSize: 13, opacity: 0.9, lineHeight: 1.6, marginBottom: 16 }}>Account horeba ma leedahay? Soo gal si aad u sii wadato.</p>
+              <BrandList />
               <button type="button" onClick={() => setMode('login')} style={ghostBtnStyle}>
                 Soo Gal
               </button>
@@ -301,8 +380,10 @@ export default function AuthPanel({ sessionId, onClose, onAuthed }: Props) {
                 transform: active ? 'translateX(20%)' : 'translateX(0)',
               }}
             >
+              <img src="/logo.png" alt="FCS Technology" style={{ width: 40, height: 40, borderRadius: 10, marginBottom: 14 }} />
               <h3 style={{ fontSize: 20, fontWeight: 900, marginBottom: 10 }}>Salaan!</h3>
-              <p style={{ fontSize: 13, opacity: 0.9, lineHeight: 1.6, marginBottom: 20 }}>Samee account si aad dalabkaaga u xaqiijiso oo aad la socoto xaaladdiisa.</p>
+              <p style={{ fontSize: 13, opacity: 0.9, lineHeight: 1.6, marginBottom: 16 }}>Samee account si aad dalabkaaga u xaqiijiso oo aad la socoto xaaladdiisa.</p>
+              <BrandList />
               <button type="button" onClick={() => setMode('signup')} style={ghostBtnStyle}>
                 Samee Account
               </button>
@@ -359,6 +440,23 @@ const dotStyle = (active: boolean): React.CSSProperties => ({
   borderRadius: 100,
   background: active ? '#7C3AED' : 'rgba(15,23,42,0.15)',
   transition: 'all 0.3s ease',
+})
+
+const facebookBtnStyle = (busy: boolean): React.CSSProperties => ({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 10,
+  background: '#1877F2',
+  color: 'white',
+  border: 'none',
+  padding: 11,
+  borderRadius: 100,
+  fontWeight: 700,
+  fontSize: 14,
+  cursor: busy ? 'default' : 'pointer',
+  opacity: busy ? 0.7 : 1,
 })
 
 const ghostBtnStyle: React.CSSProperties = {
