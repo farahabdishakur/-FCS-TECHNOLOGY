@@ -8,6 +8,7 @@ const emptyDb = () => ({
   outbox: {},
   groups: {},
   users: {},
+  staffChats: {},
   meta: { seq: {}, paused: false, llm: {}, lastReportDay: '', lastPostsWeek: '' },
 })
 
@@ -210,6 +211,17 @@ export function createStore(dir) {
       .slice(0, limit)
   }
 
+  // Wada-hadalka shaqaalaha (Farah + xafiis kasta ee AI-ga ah, Telegram) — waa ku kala go'an intake/sales/dalab
+  // ee macaamiisha, taariikh gaar ah ayuu wataa xafiis kasta si looga hadli karo mowduuc ka hore.
+  const getStaffChat = (office) => (db.staffChats[office] ||= { history: [] })
+
+  const pushStaffMessage = (office, role, text) => {
+    const chat = getStaffChat(office)
+    chat.history.push({ role, text, ts: Date.now() })
+    if (chat.history.length > 30) chat.history.splice(0, chat.history.length - 30)
+    save()
+  }
+
   const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
   const toCsv = () => {
     const head = ['id', 'magac', 'tel', 'luuqad', 'adeeg', 'xaalad', 'qiimo', '50%_horay', '50%_dhammaad', 'deadline', 'qoraal_AI', 'u_gudbi_Farah']
@@ -263,5 +275,7 @@ export function createStore(dir) {
     checkVerifyCode,
     VERIFY_RESULT,
     getRecentQuestions,
+    getStaffChat,
+    pushStaffMessage,
   }
 }

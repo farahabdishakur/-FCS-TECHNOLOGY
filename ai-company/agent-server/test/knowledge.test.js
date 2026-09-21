@@ -323,6 +323,38 @@ test('Bot-yada xafiisyada: salaan gaar ah oo persona ah, iyo outbox oo aan isku 
   assert.deepEqual(supportSent, [[900, 'Farah: fariin cusub']])
 })
 
+test('Bot-ka shaqaalaha gudaha (createStaffBridge): Farah oo kaliya, qof kale waa la diidaa', async () => {
+  const { createStaffBridge } = await import('../src/tgpublic.js')
+  const { staffWelcome } = await import('../src/personas.js')
+  const t = setup()
+  const bridge = createStaffBridge({ orchestrator: t.app.orchestrator, office: 'siyaasad', welcome: staffWelcome('siyaasad'), ownerChatId: '12345' })
+
+  // Qof kale (ma aha Farah) — waa la diidaa, macaamiil-nooc lama siiyo wax adeeg ah.
+  const stranger = await bridge.handle('Salaan, ma heli karaa qiimo?', '99999')
+  assert.match(stranger, /shaqaale gudaha ah/)
+  assert.doesNotMatch(stranger, /\$/)
+
+  // Farah (OWNER_CHAT_ID) — /start wuxuu helayaa salaanta shaqaalaha (ma aha tan macaamiisha).
+  const welcome = await bridge.handle('/start', '12345')
+  assert.match(welcome, /Faadumo/)
+  assert.doesNotMatch(welcome, /\/dalab/)
+
+  // Farah oo wax weydiinaya — LLM lama dejin halkan (setup() = 'none'), sidaas darteed jawaabta waa mid degdeg ah,
+  // kama socoto customer guided-order flow-ga (ma weydiiso magac/lambar).
+  const reply = await bridge.handle('Sideed u qabtaa heshiiska mashruuca cusub?', '12345')
+  assert.match(reply, /LLM lama dejin/)
+  assert.equal(t.store.getStaffChat('siyaasad').history.length, 2, 'labada fariin (user + assistant) waa in la kaydiyaa')
+})
+
+test('orchestrator.handleStaff: taariikhda xafiis kasta waa kala go\'an tahay', async () => {
+  const t = setup()
+  await t.app.orchestrator.handleStaff({ office: 'hawlgal', text: 'Tayada mashruuca 12 fiiri' })
+  await t.app.orchestrator.handleStaff({ office: 'suuq', text: 'Post cusub ii samee' })
+  assert.equal(t.store.getStaffChat('hawlgal').history.length, 2)
+  assert.equal(t.store.getStaffChat('suuq').history.length, 2)
+  assert.equal(t.store.getStaffChat('hawlgal').history[0].text, 'Tayada mashruuca 12 fiiri')
+})
+
 test('Bot-ka group-yada: FAQ toos ah, dalab → DM redirect, salaan marka la ku daro, aamusnaan haddii aan la weyddiinin', async () => {
   const { createGroupBridge } = await import('../src/tgpublic.js')
   const t = setup()

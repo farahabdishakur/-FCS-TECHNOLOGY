@@ -1,8 +1,8 @@
 import { loadDotEnv, loadConfig } from './config.js'
 import { createTelegram } from './telegram.js'
 import { createApp } from './app.js'
-import { createTelegramBridge, createGroupBridge } from './tgpublic.js'
-import { PERSONAS, personaWelcome } from './personas.js'
+import { createTelegramBridge, createGroupBridge, createStaffBridge } from './tgpublic.js'
+import { PERSONAS, personaWelcome, staffWelcome } from './personas.js'
 
 loadDotEnv()
 const cfg = loadConfig()
@@ -26,12 +26,17 @@ const app = createApp(cfg, { notify: (text) => telegram.send(text), sendGroup: (
 const bridge = createTelegramBridge({ store: app.store, orchestrator: app.orchestrator, bot: publicBot })
 const groupBridge = createGroupBridge({ store: app.store, knowledge: app.knowledge })
 
-// Xafiis kasta oo TELEGRAM_OFFICE_BOTS ku qoran (.env) wuxuu helayaa bot Telegram gaar ah oo isticmaala isla
-// orchestrator-ka (Maskax ayaa si sax ah u kala saaraya fariinta), laakiin salaan gaar ah leh (magaca xafiiska).
+// Xafiis kasta oo TELEGRAM_OFFICE_BOTS ku qoran (.env) wuxuu helayaa bot Telegram gaar ah. 'sales' kaliya ayaa
+// macaamiisha la hadla (customer flow, isla orchestrator.handleCustomer); intiisa kale waa shaqaale gudaha ah oo
+// Farah oo kaliya (OWNER_CHAT_ID) la hadli karo — orchestrator.handleStaff, taariikh gaar ah xafiis kasta.
 const officeBots = {}
 for (const [office, token] of Object.entries(cfg.telegram.officeBots)) {
   const bot = createTelegram({ token, ownerChatId: '', log: (type, data) => app.store.log(`office_${office}_${type}`, data) })
-  officeBots[office] = { bot, bridge: createTelegramBridge({ store: app.store, orchestrator: app.orchestrator, bot, welcome: personaWelcome(office), office }) }
+  const bridge =
+    office === 'sales'
+      ? createTelegramBridge({ store: app.store, orchestrator: app.orchestrator, bot, welcome: personaWelcome(office), office })
+      : createStaffBridge({ orchestrator: app.orchestrator, office, welcome: staffWelcome(office), ownerChatId: cfg.telegram.ownerChatId })
+  officeBots[office] = { bot, bridge }
 }
 
 app.server.listen(cfg.port, () => {
@@ -45,7 +50,7 @@ app.server.listen(cfg.port, () => {
   const officeCount = Object.keys(officeBots).length
   console.log(
     officeCount
-      ? `Bot-yada xafiisyada (${officeCount}): ${Object.entries(officeBots).map(([o, x]) => `${PERSONAS[o]?.name || o}${x.bot.enabled ? '' : ' (token khaldan)'}`).join(', ')}`
+      ? `Bot-yada xafiisyada (${officeCount}): ${Object.entries(officeBots).map(([o, x]) => `${PERSONAS[o]?.name || o}${o === 'sales' ? ' [macaamiisha]' : ' [shaqaale-Farah]'}${x.bot.enabled ? '' : ' (token khaldan)'}`).join(', ')}`
       : 'Bot-yada xafiisyada: lama dejin (TELEGRAM_OFFICE_BOTS)',
   )
   console.log(`Aasaaska AI-ga: ${app.knowledge.seedCount} su'aal oo hore loo diyaariyay + ${app.knowledge.listTaught().length} aad baartay`)

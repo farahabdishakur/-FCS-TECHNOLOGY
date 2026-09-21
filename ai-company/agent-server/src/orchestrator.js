@@ -277,6 +277,32 @@ export function createOrchestrator({ store, brain, agents, llm, knowledge, notif
     return afterSales(s, r, text)
   }
 
+  // Wada-hadalka shaqaalaha (Farah + xafiis kasta oo Telegram bot u leh, aan ahayn 'sales') — halkan customer
+  // guided/order flow-ku ma jiro; waa kaliya wada-hadal xor ah oo u dhexeeya Farah iyo xafiiska (agents.staffChat).
+  async function handleStaff({ office, text }) {
+    const clean = String(text || '').trim().slice(0, 1500)
+    if (!clean) return { reply: '' }
+    const chat = store.getStaffChat(office)
+    store.pushStaffMessage(office, 'user', clean)
+    let reply
+    try {
+      if (!llm.available()) {
+        reply = 'LLM lama dejin (LLM_API_KEY), sidaas darteed hadda kaama caawin karo. Farah, hubi Render → LLM_API_KEY.'
+      } else {
+        reply = await agents.staffChat(office, {
+          history: chat.history.slice(0, -1),
+          input: clean,
+          extra: `Kan waa Farah, milkiilaha FCS Technology — ma aha macaamiil, waa saaxiibkaa/madaxaaga. Wuxuu kula hadlayaa si toos ah oo shaqo ah (ma aha dalab/qiimo macaamiil). Ku jawaab si xor ah, waxtar leh, gaaban.`,
+        })
+      }
+    } catch (e) {
+      store.log('staff_chat_error', { office, message: e.message })
+      reply = 'Khalad ayaa dhacay, isku day mar kale.'
+    }
+    store.pushStaffMessage(office, 'assistant', reply)
+    return { reply }
+  }
+
   async function handleCustomer({ sessionId, text, name, phone }) {
     const s = store.getSession(sessionId)
     if (name) s.name = String(name).slice(0, 80)
@@ -680,5 +706,5 @@ export function createOrchestrator({ store, brain, agents, llm, knowledge, notif
     }
   }
 
-  return { handleCustomer, handleOwner, tick, buildReport, approve, reject }
+  return { handleCustomer, handleStaff, handleOwner, tick, buildReport, approve, reject }
 }

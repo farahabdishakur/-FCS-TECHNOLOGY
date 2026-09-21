@@ -68,6 +68,23 @@ export function createTelegramBridge({ store, orchestrator, bot, welcome = WELCO
   return { handle, flushOutbox }
 }
 
+// Bot-ka shaqaalaha gudaha (xafiis kasta oo aan ahayn 'sales') — kaliya Farah (OWNER_CHAT_ID) ayaa lagula hadlaa,
+// qof kale oo qora waxaa loo sheegayaa in bot-kan uu yahay mid shaqaale gudaha ah, kuma jawaabo dalabyada macaamiisha.
+export function createStaffBridge({ orchestrator, office, welcome, ownerChatId }) {
+  async function handle(text, chatId) {
+    const t = String(text || '').trim()
+    if (!t) return ''
+    if (!ownerChatId) return "Bot-kan shaqaale gudaha ah lama dejin (OWNER_CHAT_ID lama qorin)."
+    if (String(chatId) !== String(ownerChatId)) {
+      return 'Waan ka xumahay, bot-kan waa shaqaale gudaha ah oo kaliya Farah la hadlo. Adeegyada iyo dalabka, fadlan la xiriir @FCS_Sales_bot ama WhatsApp +252 63 713 3499.'
+    }
+    if (t === '/start' || t === '/help') return welcome
+    const { reply } = await orchestrator.handleStaff({ office, text: t })
+    return reply
+  }
+  return { handle, flushOutbox: async () => {} }
+}
+
 const THANKS = { so: "🙏 Mahadsanid su'aashaada!", en: '🙏 Thanks for your question!', ar: '🙏 شكرًا على سؤالك!' }
 
 const GROUP_WELCOME = [

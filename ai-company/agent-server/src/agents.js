@@ -51,5 +51,8 @@ export function createAgents({ brain, llm }) {
     contract: (ctx) => call('siyaasad', { ...ctx, json: false, maxTokens: 1800 }),
     draft: (ctx) => call('caawin', { ...ctx, json: false, maxTokens: 1800 }),
     posts: (ctx) => call('suuq', { ...ctx, json: false, maxTokens: 1500 }),
+    // Wada-hadal xor ah (qoraal, ma aha JSON) — xafiis kasta, isticmaalka Farah (shaqaale, ma aha macaamiil).
+    // office kasta wuu shaqeeyaa (10-da oo dhan), isla brain.offices[office].prompt ayaa la isticmaalaa.
+    staffChat: (office, ctx) => call(office, { ...ctx, json: false, maxTokens: 1200 }),
   }
 }

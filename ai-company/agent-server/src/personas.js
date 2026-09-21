@@ -13,6 +13,14 @@ export const PERSONAS = {
   suuq: { name: 'Deeqa', role: 'Maamulaha Suuq-geynta' },
 }
 
+// Salaanta bot-yada shaqaalaha gudaha (Farah oo kaliya) — ma khusayso macaamiisha, sidaas darteed lama darin
+// /dalab iyo /adeegyada (kuwaas waa amarrada macaamiisha).
+export const staffWelcome = (office) => {
+  const p = PERSONAS[office]
+  const who = p ? `${p.name}, ${p.role}` : 'shaqaale AI ah'
+  return `Asc Farah! Waxaan ahay ${who}. Maxaan kuu qaban karaa maanta?`
+}
+
 export const personaWelcome = (office) => {
   const p = PERSONAS[office]
   const who = p ? `Waxaan ahay ${p.name}, ${p.role} ee FCS Technology.` : 'Waxaan ahay caawiyaha AI ee FCS Technology.'
