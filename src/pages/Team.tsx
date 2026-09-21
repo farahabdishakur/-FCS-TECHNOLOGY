@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Sparkles, MessageCircle, ShieldCheck, ArrowRight, Workflow } from 'lucide-react'
 import { avatar, team, teamByOffice } from '../data/team'
 
@@ -8,9 +8,7 @@ import { avatar, team, teamByOffice } from '../data/team'
 const FLOW = ['maskax', 'intake', 'sales', 'maaliyad', 'siyaasad', 'hawlgal', 'taageero']
 
 export default function Team() {
-  const openChat = (prefill: string, persona: { name: string; role: string; avatar: string }) => {
-    window.dispatchEvent(new CustomEvent('fcs-chat-open', { detail: { prefill, persona } }))
-  }
+  const navigate = useNavigate()
 
   return (
     <div style={{ background: '#0F172A', minHeight: '100vh', paddingTop: 90, paddingBottom: 100 }}>
@@ -164,9 +162,7 @@ export default function Team() {
                   Bogga <ArrowRight size={13} />
                 </Link>
                 <button
-                  onClick={() =>
-                    openChat(`Waxaan rabaa inaan ${m.name} wax weydiiyo oo ku saabsan ${m.role}.`, { name: m.name, role: m.role, avatar: avatar(m.name) })
-                  }
+                  onClick={() => navigate(`/chat/${m.office}`)}
                   style={{
                     flex: 1,
                     display: 'inline-flex',

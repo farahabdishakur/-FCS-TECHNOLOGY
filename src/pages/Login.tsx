@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuthForm, GOOGLE_CLIENT_ID, FACEBOOK_APP_ID } from '../hooks/useAuthForm'
 
 const SIGNED_IN_KEY = 'fcs_chat_signed_in'
+const RECENT_Q_KEY = 'fcs_recent_questions'
 
 function sessionId(): string {
   const key = 'fcs_chat_session'
@@ -50,9 +51,10 @@ export default function Login() {
   const idRef = useRef(sessionId())
   const navigate = useNavigate()
   const [welcomeName, setWelcomeName] = useState('')
-  const onAuthed = (_reply: string, authedName: string) => {
+  const onAuthed = (_reply: string, authedName: string, recentQuestions?: { text: string; ts: number }[]) => {
     try {
       localStorage.setItem(SIGNED_IN_KEY, 'true')
+      if (recentQuestions) localStorage.setItem(RECENT_Q_KEY, JSON.stringify(recentQuestions))
     } catch {
       /* storage can be unavailable in private mode */
     }

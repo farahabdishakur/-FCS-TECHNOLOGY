@@ -8,7 +8,10 @@ type Mode = 'login' | 'signup'
 
 // Isla xaqiijinta (email/password, Google, Facebook) oo la wadaago labada isku-dayga: AuthPanel.tsx (modal-ka
 // wada-hadalka gudihiisa ah) iyo Login.tsx (bogga buuxa). Halkan waa manti kaliya — muuqaalka gaar buu leeyahay.
-export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: string) => void) {
+export type RecentQuestion = { text: string; ts: number }
+type AuthResponse = { reply?: string; name?: string; error?: string; recentQuestions?: RecentQuestion[] }
+
+export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: string, recentQuestions?: RecentQuestion[]) => void) {
   const [mode, setMode] = useState<Mode>('signup')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -30,10 +33,10 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ sessionId, credential: response.credential }),
         })
-        const data: { reply?: string; name?: string; error?: string } = await r.json().catch(() => ({}))
+        const data: AuthResponse = await r.json().catch(() => ({}))
         if (cancelled) return
         if (!r.ok) throw new Error(data.error || 'Google sign-in failed')
-        onAuthed(data.reply || '', data.name || '')
+        onAuthed(data.reply || '', data.name || '', data.recentQuestions)
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
       } finally {
@@ -100,9 +103,9 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ sessionId, accessToken: response.authResponse.accessToken }),
           })
-          const data: { reply?: string; name?: string; error?: string } = await r.json().catch(() => ({}))
+          const data: AuthResponse = await r.json().catch(() => ({}))
           if (!r.ok) throw new Error(data.error || 'Facebook sign-in failed')
-          onAuthed(data.reply || '', data.name || '')
+          onAuthed(data.reply || '', data.name || '', data.recentQuestions)
         } catch (e) {
           setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
         } finally {
@@ -121,13 +124,13 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
       const path = mode === 'signup' ? '/api/auth/register' : '/api/auth/login'
       const body = mode === 'signup' ? { sessionId, name, email, password } : { sessionId, email, password }
       const res = await fetch(`${API}${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
-      const data: { reply?: string; name?: string; error?: string; needsVerification?: boolean } = await res.json().catch(() => ({}))
+      const data: AuthResponse & { needsVerification?: boolean } = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.error || 'Khalad ayaa dhacay.')
       if (data.needsVerification) {
         setPendingCode(true)
         return
       }
-      onAuthed(data.reply || '', data.name || name)
+      onAuthed(data.reply || '', data.name || name, data.recentQuestions)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
     } finally {
@@ -145,9 +148,9 @@ export function useAuthForm(sessionId: string, onAuthed: (reply: string, name: s
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ sessionId, code }),
       })
-      const data: { reply?: string; name?: string; error?: string } = await res.json().catch(() => ({}))
+      const data: AuthResponse = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.error || 'Khalad ayaa dhacay.')
-      onAuthed(data.reply || '', data.name || name)
+      onAuthed(data.reply || '', data.name || name, data.recentQuestions)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Khalad ayaa dhacay.')
     } finally {

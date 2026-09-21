@@ -115,11 +115,12 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         session.verified = true
         store.save()
         store.log('signed_in', { session: sessionId, email })
+        const recentQuestions = store.getRecentQuestions(userId)
         if (session.flow?.step === 'name') {
           const r = await orchestrator.handleCustomer({ sessionId, text: name })
-          return r.reply
+          return { reply: r.reply, recentQuestions }
         }
-        return `✅ Waad soo gashay, ${name}.`
+        return { reply: `✅ Waad soo gashay, ${name}.`, recentQuestions }
       }
 
       const authIp = () => req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress
@@ -157,8 +158,8 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         const email = normalizeEmail(profile.email)
         let user = store.findUserByEmail(email)
         if (!user) user = store.createUser({ name: profile.name, email, provider: 'google' })
-        const reply = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
-        return json(res, 200, { reply, name: user.name || profile.name })
+        const { reply, recentQuestions } = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name || profile.name, recentQuestions })
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/facebook') {
@@ -182,8 +183,8 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         const email = normalizeEmail(profile.email)
         let user = store.findUserByEmail(email)
         if (!user) user = store.createUser({ name: profile.name, email, provider: 'facebook' })
-        const reply = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
-        return json(res, 200, { reply, name: user.name || profile.name })
+        const { reply, recentQuestions } = await bindAuthedSession(sessionId, { name: user.name || profile.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name || profile.name, recentQuestions })
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/register') {
@@ -232,8 +233,8 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
           store.save()
           return json(res, 200, { needsVerification: true, name: user.name })
         }
-        const reply = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
-        return json(res, 200, { reply, name: user.name })
+        const { reply, recentQuestions } = await bindAuthedSession(sessionId, { name: user.name, email, userId: user.id })
+        return json(res, 200, { reply, name: user.name, recentQuestions })
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/verify-email') {
@@ -254,8 +255,8 @@ export function createApp(cfg, { notify = (t) => console.log('[notify]', t), sen
         if (result === 'expired') return json(res, 410, { error: 'Koodhku wuu dhacay. Codso mid cusub.' })
         if (result === 'locked') return json(res, 429, { error: 'Isku day badan oo khalad ah. Codso koodh cusub.' })
         delete session.pendingVerifyUserId
-        const reply = await bindAuthedSession(sessionId, { name: user.name, email: user.email, userId: user.id })
-        return json(res, 200, { reply, name: user.name })
+        const { reply, recentQuestions } = await bindAuthedSession(sessionId, { name: user.name, email: user.email, userId: user.id })
+        return json(res, 200, { reply, name: user.name, recentQuestions })
       }
 
       if (req.method === 'POST' && url.pathname === '/api/auth/resend-code') {

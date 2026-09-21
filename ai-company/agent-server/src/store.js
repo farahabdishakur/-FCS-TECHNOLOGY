@@ -197,6 +197,19 @@ export function createStore(dir) {
     return VERIFY_RESULT.ok
   }
 
+  // Su'aalihii ugu dambeeyay ee account-kan (userId) — la isticmaalo si loo xasuusto qofka marka uu soo laabto,
+  // xitaa haddii uu isticmaalo browser/session kale (userId-gu wuu isku mid yahay, sessionId-gu ma aha).
+  const getRecentQuestions = (userId, limit = 3) => {
+    const questions = []
+    for (const s of Object.values(db.sessions)) {
+      if (s.userId !== userId) continue
+      for (const m of s.history) if (m.role === 'user') questions.push({ text: m.text, ts: m.ts })
+    }
+    return questions
+      .sort((a, b) => b.ts - a.ts)
+      .slice(0, limit)
+  }
+
   const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
   const toCsv = () => {
     const head = ['id', 'magac', 'tel', 'luuqad', 'adeeg', 'xaalad', 'qiimo', '50%_horay', '50%_dhammaad', 'deadline', 'qoraal_AI', 'u_gudbi_Farah']
@@ -249,5 +262,6 @@ export function createStore(dir) {
     setVerifyCode,
     checkVerifyCode,
     VERIFY_RESULT,
+    getRecentQuestions,
   }
 }

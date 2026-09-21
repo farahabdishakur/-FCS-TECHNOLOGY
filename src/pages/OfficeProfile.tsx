@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { Link, useParams, Navigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
 import { ArrowLeft, MessageCircle } from 'lucide-react'
 import { avatar, teamByOffice, team } from '../data/team'
 
 export default function OfficeProfile() {
   const { office } = useParams<{ office: string }>()
+  const navigate = useNavigate()
   const member = office ? teamByOffice(office) : undefined
 
   useEffect(() => {
@@ -12,14 +13,6 @@ export default function OfficeProfile() {
   }, [member])
 
   if (!member) return <Navigate to="/team" replace />
-
-  const openChat = () => {
-    window.dispatchEvent(
-      new CustomEvent('fcs-chat-open', {
-        detail: { prefill: `Waxaan rabaa inaan ${member.name} wax weydiiyo.`, persona: { name: member.name, role: member.role, avatar: avatar(member.name) } },
-      }),
-    )
-  }
 
   const others = team.filter((m) => m.office !== member.office)
 
@@ -64,7 +57,7 @@ export default function OfficeProfile() {
           </span>
           <p style={{ color: '#94A3B8', fontSize: 16, lineHeight: 1.8, maxWidth: 560, margin: '0 auto 28px' }}>{member.blurb}</p>
           <button
-            onClick={openChat}
+            onClick={() => navigate(`/chat/${member.office}`)}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

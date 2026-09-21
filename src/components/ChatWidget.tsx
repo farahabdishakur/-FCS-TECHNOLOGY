@@ -12,6 +12,7 @@ const SESSION_KEY = 'fcs_chat_session'
 const CURSOR_KEY = 'fcs_chat_cursor'
 const MESSAGES_KEY = 'fcs_chat_messages'
 const PERSONA_KEY = 'fcs_chat_persona'
+const RECENT_Q_KEY = 'fcs_recent_questions'
 
 type Msg = { from: 'me' | 'bot'; text: string; ts?: number }
 type Persona = { name: string; role: string; avatar: string }
@@ -141,9 +142,10 @@ export default function ChatWidget() {
   const lastBotText = [...messages].reverse().find((m) => m.from === 'bot')?.text || ''
   const needsAuth = !signedIn && ASKING_NAME_RE.test(lastBotText)
 
-  const onAuthed = (reply: string, name: string) => {
+  const onAuthed = (reply: string, name: string, recentQuestions?: { text: string; ts: number }[]) => {
     setSignedIn(true)
     write(SIGNED_IN_KEY, true)
+    if (recentQuestions) write(RECENT_Q_KEY, recentQuestions)
     setShowAuth(false)
     void name
     if (reply) setMessages((m) => [...m, { from: 'bot', text: reply, ts: Date.now() }])
